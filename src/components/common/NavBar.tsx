@@ -1,23 +1,42 @@
 import * as React from "react";
+import Container from 'react-bootstrap/Container';
 import Navbar from "react-bootstrap/Navbar";
 import Nav from "react-bootstrap/Nav";
+import NavDropdown from 'react-bootstrap/NavDropdown';
 
 // Properties 
+export interface NavBarProps {
+  userName : string,
+  signOut:  React.MouseEventHandler | undefined
+}
 
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
+export interface NavBarState {
+}
 
-export class NavBar extends React.Component {
+export class NavBar extends React.Component<NavBarProps,NavBarState> {
 
   render() {
     return (
-      <div>
-        <Navbar bg="dark" variant="dark">
-          <Navbar.Brand href="/">Event Management</Navbar.Brand>
-          <Nav className="mr-auto">
-            <Nav.Link href="/">Events</Nav.Link>
-            <Nav.Link href="about">About</Nav.Link>
-          </Nav>
-        </Navbar>
-      </div>
+
+      <Navbar bg="dark" variant="dark" expand="lg" >
+        <Navbar.Brand href="/">Event Management</Navbar.Brand>
+        <Nav className="me-auto">
+          <Nav.Link href="/">Events</Nav.Link>
+          <Nav.Link href="about">About</Nav.Link>
+          <Navbar.Toggle />
+        </Nav>
+        <Container>
+          <Navbar.Collapse className="justify-content-end">
+            <NavDropdown menuVariant="dark" title={this.props.userName} as={Navbar.Text} id="nav-dropdown">
+              <NavDropdown.Item href="profile" disabled>Profile</NavDropdown.Item>
+              <NavDropdown.Divider />
+              <NavDropdown.Item onClick={this.props.signOut}>Sign out</NavDropdown.Item>
+            </NavDropdown>
+          </Navbar.Collapse>
+        </Container>
+
+      </Navbar>
     )
   }
 }

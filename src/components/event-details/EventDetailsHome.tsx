@@ -3,41 +3,43 @@ import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
 import Container from "react-bootstrap/Container";
 import { PageTitle } from "../common/PageTitle";
-import { Event } from "../events/model/Event"
 import { GuestList } from "../guests/GuestList";
+import { useLocation } from "react-router";
+import { EventSummary } from "../events/model/EventSummary";
 
-// Properties 
-export interface EventFrameProps {
-  event?: Event
+
+function EventDetailsHome() {
+
+  const { state } = useLocation();
+  const currentEvent: EventSummary = state;
+
+  return (
+    <div>
+      <br/>
+      <Container>
+        <PageTitle title={"Event :" + currentEvent.name} />
+        <i>{currentEvent.mainLocation}</i>
+      </Container>
+      <br/>
+      <Container>
+        <Tabs
+          defaultActiveKey="guest"
+          id="uncontrolled-tab-example"
+          className="mb-3"
+        >
+          <Tab eventKey="guest" title="Guests">
+            <GuestList />
+          </Tab>
+          <Tab eventKey="expense" title="Expenses" disabled>
+            <GuestList />
+          </Tab>
+          <Tab eventKey="todo" title="To Do" disabled>
+            <GuestList />
+          </Tab>
+        </Tabs>
+      </Container >
+    </div >
+  )
 }
 
-
-export class EventDetailsHome extends React.Component<EventFrameProps> {
-  render() {
-    return (
-      <div>
-        <Container>
-          <br />
-          <PageTitle title={"Event :" + (this.props.event != undefined ? this.props.event.name : "No event selected ")} />
-          <br />
-
-          <Tabs
-            defaultActiveKey="guest"
-            id="uncontrolled-tab-example"
-            className="mb-3"
-          >
-            <Tab eventKey="guest" title="Guests">
-              <GuestList />
-            </Tab>
-            <Tab eventKey="expense" title="Expenses" disabled>
-              <GuestList />
-            </Tab>
-            <Tab eventKey="todo" title="To Do" disabled>
-              <GuestList />
-            </Tab>
-          </Tabs>
-        </Container>
-      </div>
-    )
-  }
-}
+export default EventDetailsHome;

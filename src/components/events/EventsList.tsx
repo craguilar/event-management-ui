@@ -1,19 +1,21 @@
 import * as React from "react";
-import Table from "react-bootstrap/Table"
-import ButtonGroup from "react-bootstrap/ButtonGroup"
-import Button from "react-bootstrap/Button"
 import { Event } from "./model/Event"
 import { EventSummary } from "./model/EventSummary"
 import { EventDetails } from "./EventDetails";
 import { EventRepository } from "./EventRepository";
+import { Navigate } from "react-router-dom";
+import Table from "react-bootstrap/Table"
+import ButtonGroup from "react-bootstrap/ButtonGroup"
+import Button from "react-bootstrap/Button"
 import Modal from "react-bootstrap/Modal";
 import Alert from "react-bootstrap/Alert";
 import Container from "react-bootstrap/Container";
 import { PageTitle } from "../common/PageTitle";
 
 // Properties 
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface EventListProps {
-  userName: string;
+
 }
 
 // State
@@ -22,6 +24,7 @@ export interface EventListState {
   showModal: boolean,
   typeOfOperation: string,
   current: Event,
+  currentDetails?: Event,
   showAlert: boolean,
   alertText: string
 }
@@ -44,13 +47,18 @@ export class EventList extends React.Component<EventListProps, EventListState> {
   constructor(props: EventListProps) {
 
     super(props);
+    
     this.state = { events: [], showModal: false, showAlert: false, alertText: '', typeOfOperation: NEW_TYPE_OF_OPERATION, current: {} as Event };
-    this.refreshList()
+    
     this.eventDetailsComponent = React.createRef();
     this.handleModalClose = this.handleModalClose.bind(this)
     this.handleAlertClose = this.handleAlertClose.bind(this)
     this.onAddButtonClick = this.onAddButtonClick.bind(this)
 
+  }
+
+  componentDidMount(){
+    this.refreshList()
   }
 
   refreshList() {
@@ -62,7 +70,7 @@ export class EventList extends React.Component<EventListProps, EventListState> {
     }).catch(error => {
       this.setState({
         showAlert: true,
-        alertText: this.handlerErrorFromServer(error)
+        alertText: this.handleErrorFromServer(error)
       })
     })
   }
@@ -72,7 +80,10 @@ export class EventList extends React.Component<EventListProps, EventListState> {
       this.repository.add(value).then(() => {
         this.refreshList()
       }).catch(error => {
-        alert(error)
+        this.setState({
+          showAlert: true,
+          alertText: this.handleErrorFromServer(error)
+        })
       })
     } else {
       this.repository.update(value).then(() => {
@@ -80,14 +91,14 @@ export class EventList extends React.Component<EventListProps, EventListState> {
       }).catch(error => {
         this.setState({
           showAlert: true,
-          alertText: this.handlerErrorFromServer(error)
+          alertText: this.handleErrorFromServer(error)
         })
       })
     }
   }
 
 
-  handlerErrorFromServer(error: any) {
+  handleErrorFromServer(error: any) {
     let message = "From server -  unexpected error : "
     if (error.status === 401) {
       message = 'Unauthorized request'
@@ -108,7 +119,7 @@ export class EventList extends React.Component<EventListProps, EventListState> {
     }).catch(error => {
       this.setState({
         showAlert: true,
-        alertText: this.handlerErrorFromServer(error)
+        alertText: this.handleErrorFromServer(error)
       })
     })
   }
@@ -186,8 +197,8 @@ export class EventList extends React.Component<EventListProps, EventListState> {
                     <tr>
                       <td>
                         <ButtonGroup >
-                          <Button key={event.id} variant="success" onClick={() => { window.location.href = '/details' }}>View</Button>
-                          <Button key={event.id} variant="primary" onClick={() => { this.onEditButtonClick(event.id) }}>Edit</Button>
+                          <Button variant="success" onClick={() => this.setState({currentDetails:event})}>Details</Button>
+                          <Button variant="primary" onClick={() => { this.onEditButtonClick(event.id) }}>Edit</Button>
                         </ButtonGroup>
                       </td>
                       <td>{event.name}</td>
@@ -198,6 +209,7 @@ export class EventList extends React.Component<EventListProps, EventListState> {
                 })
               }
             </tbody>
+            {this.state.currentDetails && <Navigate to="/details" state={this.state.currentDetails} replace={true} />}
           </Table>
         </div>
       </div>
@@ -212,10 +224,9 @@ export class EventList extends React.Component<EventListProps, EventListState> {
           <Alert show={this.state.showAlert} onClose={this.handleAlertClose} key='alert' variant='warning' dismissible>
             {this.state.alertText}
           </Alert>
-          <PageTitle title={"Events for " + this.props.userName + " :"} />
+          <PageTitle title={"My events"} />
           {this.displayTable()}
         </Container>
-
         <Modal show={this.state.showModal} onHide={this.handleModalClose} size="lg" >
           <Modal.Header closeButton>
             <Modal.Title>{this.state.typeOfOperation} event</Modal.Title>
