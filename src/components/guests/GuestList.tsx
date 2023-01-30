@@ -1,17 +1,37 @@
 import * as React from "react";
+import { GuestDetail } from "./GuestDetails";
+import Guest from "./model/Guest";
+import { GuestRepository } from "./GuestRepository";
 import DataTable from 'react-data-table-component';
+import ButtonGroup from "react-bootstrap/ButtonGroup"
 import Button from "react-bootstrap/Button"
+import Modal from "react-bootstrap/Modal"
+import { IoIosAdd } from "react-icons/io"
+import { CgExport } from "react-icons/cg"
+import {  MdDelete } from "react-icons/md";
+import Alert from "react-bootstrap/Alert"
 
 // Properties 
 export interface GuestListProps {
-  eventId?: string
+  eventId: string
 }
 
+export interface GuestListState {
+  guests: Guest[],
+  selected: Guest[],
+  showModal: boolean,
+  showAlert: boolean,
+  alertText: string,
+  toggledClearRows: boolean
+}
 
-export class GuestList extends React.Component<GuestListProps> {
+export class GuestList extends React.Component<GuestListProps, GuestListState> {
 
 
-  columns = [
+  private repository = new GuestRepository();
+  private detailsComponent: React.RefObject<GuestDetail>;
+
+  private columns = [
     {
       name: 'First Name',
       selector: (row: any) => row.firstName,
@@ -54,26 +74,202 @@ export class GuestList extends React.Component<GuestListProps> {
 
   ];
 
-  data = [
-    {
-      "firstName": "John",
-      "lastName": "Doe",
-      "guestOf": "Bride",
-      "numberOfSeats": 1
-    },
-    {
-      "firstName": "Elon",
-      "lastName": "Musk",
-      "guestOf": "Bride",
-      "numberOfSeats": 1
+  constructor(props: GuestListProps) {
+    super(props)
+    this.state = { guests: [], showAlert: false, alertText: '', showModal: false, selected: [],toggledClearRows: false }
+    this.detailsComponent = React.createRef();
+    // TODO: Do I really need this?
+    this.handleAlertClose = this.handleAlertClose.bind(this)
+    this.handleModalClose = this.handleModalClose.bind(this)
+    this.onSelectedRows = this.onSelectedRows.bind(this)
+  }
+
+  // TODO check wht it's called twice
+  componentDidMount() {
+    this.refreshList()
+  }
+
+  // Data handling methods
+
+  refreshList() {
+    this.repository.list(this.props.eventId != undefined ? this.props.eventId : '-').then(results => {
+      this.setState({
+        guests: results
+      })
+    }).catch(error => {
+      this.setState({
+        showAlert: true,
+        alertText: this.handleErrorFromServer(error)
+      })
+    })
+  }
+
+  addModel(value: Guest) {
+
+    this.repository.add(this.props.eventId, value).then(() => {
+      this.refreshList()
+    }).catch(error => {
+      this.setState({
+        showAlert: true,
+        alertText: this.handleErrorFromServer(error)
+      })
+    })
+  }
+
+  handleErrorFromServer(error: any) {
+    const message = "From server -  unexpected error : "
+    if (error.status === 401) {
+      return 'Unauthorized request'
     }
-  ]
+    if (error instanceof Response && error.body != undefined) {
+      return message + (error as Response).statusText
+    }
+    return message;
+  }
+
+  // UI handlers and Components
+  onAddButtonClick() {
+    this.setState({
+      showModal: true
+    })
+  }
+
+  onSelectedRows(event: any){
+    this.setState({
+      selected: event.selectedRows
+    })
+  }
+
+  onDeleteButton(){
+    for(const row of this.state.selected){
+      this.repository.delete(this.props.eventId , row.id).then(() => {
+        // 
+      }).catch(error => {
+        this.setState({
+          showAlert: true,
+          alertText: this.handleErrorFromServer(error)
+        })
+      })
+    }
+    this.setState((prevState, props)=>({
+      toggledClearRows : !prevState.toggledClearRows,
+      selected: []
+    }))
+    this.refreshList()
+  }
+
+
+  handleAlertClose() {
+    this.setState({
+      showAlert: false,
+      alertText: ''
+    })
+  }
+
+  handleModalClose() {
+    this.setState({
+      showModal: false
+    })
+  }
+
+  onSubmitClick = (event: any) => {
+
+    const elements = event.target.elements
+    if (elements.length > 0) {
+      this.addModel(this.getFromForm(elements))
+    }
+    this.setState({
+      showModal: false
+    })
+    event.preventDefault()
+  }
+
+  getFromForm(elements: any) {
+    const firstName = elements[0].value
+    const lastName = elements[1].value
+    const email = elements[2].value
+    const phone = elements[3].value
+    const numberOfSeats = parseInt(elements[4].value)
+    const country = elements[5].value
+    const state = elements[6].value
+    const guestOf = elements[7].value
+    const isTentative = elements[8].value == "on"
+    const guest: Guest = {
+      firstName: firstName,
+      lastName: lastName,
+      email: email,
+      phone: phone,
+      numberOfSeats: numberOfSeats,
+      country: country,
+      state: state,
+      guestOf: guestOf,
+      isTentative: isTentative
+    }
+    return guest
+  }
+
+  deleteButton = () => {
+    return <Button onClick={() => { this.onDeleteButton() }} key="delete" variant="danger"><MdDelete />Delete</Button>
+  }
+
+  gridActions = () => {
+    return <ButtonGroup >
+      <Button onClick={() => { this.onAddButtonClick() }} type="button" variant="outline-success"><IoIosAdd />Guest</Button>
+      <Button onClick={() => { this.downloadCSV(this.state.guests) }} type="button" variant="outline-primary"><CgExport /> csv</Button>
+    </ButtonGroup>;
+  }
+
+  // TODO: this looks super ugly 
+  render() {
+    return (<div>
+      <Alert show={this.state.showAlert} onClose={this.handleAlertClose} key='alert' variant='warning' dismissible>
+        {this.state.alertText}
+      </Alert>
+      <DataTable
+        columns={this.columns}
+        data={this.state.guests}
+        actions={ this.gridActions()}
+        contextActions={this.deleteButton()}
+        onSelectedRowsChange={this.onSelectedRows}
+        clearSelectedRows={this.state.toggledClearRows}
+        selectableRows
+        pagination
+        highlightOnHover
+      />
+      <Modal show={this.state.showModal} onHide={this.handleModalClose} size="lg" >
+        <Modal.Header closeButton>
+          <Modal.Title>Add guest</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <GuestDetail ref={this.detailsComponent}  onSubmit={this.onSubmitClick} />
+        </Modal.Body>
+      </Modal>
+    </div>)
+  }
+
+  // TODO : Move to utility
+  downloadCSV(array: any[]) {
+    const link = document.createElement('a');
+    let csv = this.convertArrayOfObjectsToCSV(array);
+    if (csv == null) return;
+
+    const filename = 'export.csv';
+
+    if (!csv.match(/^data:text\/csv/i)) {
+      csv = `data:text/csv;charset=utf-8,${csv}`;
+    }
+
+    link.setAttribute('href', encodeURI(csv));
+    link.setAttribute('download', filename);
+    link.click();
+  }
+
   convertArrayOfObjectsToCSV(array: any[]) {
     let result: string;
 
     const columnDelimiter = ',';
     const lineDelimiter = '\n';
-    const keys = Object.keys(this.data[0]);
+    const keys = Object.keys(this.state.guests[0]);
 
     result = '';
     result += keys.join(columnDelimiter);
@@ -94,32 +290,5 @@ export class GuestList extends React.Component<GuestListProps> {
     return result;
   }
 
-  downloadCSV(array: any[]) {
-    const link = document.createElement('a');
-    let csv = this.convertArrayOfObjectsToCSV(array);
-    if (csv == null) return;
 
-    const filename = 'export.csv';
-
-    if (!csv.match(/^data:text\/csv/i)) {
-      csv = `data:text/csv;charset=utf-8,${csv}`;
-    }
-
-    link.setAttribute('href', encodeURI(csv));
-    link.setAttribute('download', filename);
-    link.click();
-  }
-
-  render() {
-    return (<div>
-      <DataTable
-        columns={this.columns}
-        data={this.data}
-        actions={<Button onClick={() => { this.downloadCSV(this.data) }} as="input" type="button" value="Export" />}
-        selectableRows
-        pagination
-        highlightOnHover
-      />
-    </div>)
-  }
 }

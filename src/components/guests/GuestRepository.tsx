@@ -1,13 +1,12 @@
 
-import { Event } from "./model/Event"
-import { EventSummary } from "./model/EventSummary"
+import Guest from "./model/Guest"
 import api_details from '../../api-exports';
 import { ConfigurationParameters } from "../api-configuration";
 import { Auth } from "aws-amplify";
 import { CognitoUserSession } from 'amazon-cognito-identity-js';
 
-// TODO: Thhis class requires refactor
-export class EventRepository {
+// TODO: Thhis class requires refactor +1
+export class GuestRepository {
 
   private apiConfigurationParams: ConfigurationParameters = {};
 
@@ -27,9 +26,9 @@ export class EventRepository {
     }
   }
 
-  async get(id: string): Promise<Event> {
+  async get(eventId: string, guestId: string): Promise<Guest> {
     await this.waitUser()
-    return fetch(this.apiConfigurationParams.basePath + `/events/` + id, {
+    return fetch(this.apiConfigurationParams.basePath + `/guests/` + guestId + '?eventId=' + eventId, {
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
@@ -44,9 +43,9 @@ export class EventRepository {
     });
   }
 
-  async list(): Promise<EventSummary[]> {
+  async list(eventId: string): Promise<Guest[]> {
     await this.waitUser()
-    return fetch(this.apiConfigurationParams.basePath + `/events`, {
+    return fetch(this.apiConfigurationParams.basePath + `/guests?eventId=` + eventId, {
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
@@ -61,9 +60,9 @@ export class EventRepository {
     });
   }
 
-  async add(event: Event): Promise<Event> {
+  async add(eventId: string | undefined, event: Guest): Promise<Guest> {
     await this.waitUser()
-    return fetch(this.apiConfigurationParams.basePath + `/events`, {
+    return fetch(this.apiConfigurationParams.basePath + `/guests?eventId=` + eventId, {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
@@ -81,9 +80,9 @@ export class EventRepository {
       });
   }
 
-  async update(event: Event): Promise<Event> {
+  async update(eventId: string, event: Guest): Promise<Guest> {
     await this.waitUser()
-    return fetch(this.apiConfigurationParams.basePath + `/events`,
+    return fetch(this.apiConfigurationParams.basePath + `/guests?eventId=` + eventId,
       {
         method: 'POST',
         headers: {
@@ -103,9 +102,9 @@ export class EventRepository {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  async delete(id: string): Promise<any> {
+  async delete(eventId: string, guestId: string | undefined): Promise<any> {
     await this.waitUser()
-    return fetch(this.apiConfigurationParams.basePath + `/events/` + id,
+    return fetch(this.apiConfigurationParams.basePath + `/guests/` + guestId + '?eventId=' + eventId,
       {
         method: 'DELETE',
         headers: {

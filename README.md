@@ -56,11 +56,14 @@ Some next steps:
 "amplify console" to open the Amplify Console and view your project status
 "amplify publish" will build all your local backend and frontend resources (if you have hosting category added) and provision it in the cloud    
 
+AMPLIFY_GOOGLE_CLIENT_ID
+AMPLIFY_GOOGLE_CLIENT_SECRET
+
 ## UI Components
 
 1. https://react-bootstrap.netlify.app/components/alerts
 1. https://github.com/jbetancur/react-data-table-component
-1. https://github.com/primefaces/primereact
+1. https://react-icons.github.io/react-icons
 
 ## Learn More
 
@@ -71,3 +74,5 @@ To learn React, check out the [React documentation](https://reactjs.org/).
 ## ToDo
 
 1. https://www.npmjs.com/package/react-places-autocomplete?activeTab=readme
+1. https://github.com/primefaces/primereact
+1. https://www.npmjs.com/package/react-datepicker

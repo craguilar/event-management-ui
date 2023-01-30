@@ -11,6 +11,9 @@ import Modal from "react-bootstrap/Modal";
 import Alert from "react-bootstrap/Alert";
 import Container from "react-bootstrap/Container";
 import { PageTitle } from "../common/PageTitle";
+import { FiEdit } from "react-icons/fi";
+import { MdPageview, MdDelete } from "react-icons/md";
+import { IoIosAdd } from "react-icons/io";
 
 // Properties 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
@@ -41,25 +44,27 @@ const UPDATE_TYPE_OF_OPERATION = 'Update';
 
 export class EventList extends React.Component<EventListProps, EventListState> {
 
-  repository = new EventRepository();
-  eventDetailsComponent: React.RefObject<EventDetails>;
+  private repository = new EventRepository();
+  private eventDetailsComponent: React.RefObject<EventDetails>;
 
   constructor(props: EventListProps) {
 
     super(props);
-    
+
     this.state = { events: [], showModal: false, showAlert: false, alertText: '', typeOfOperation: NEW_TYPE_OF_OPERATION, current: {} as Event };
-    
+
     this.eventDetailsComponent = React.createRef();
     this.handleModalClose = this.handleModalClose.bind(this)
     this.handleAlertClose = this.handleAlertClose.bind(this)
-    this.onAddButtonClick = this.onAddButtonClick.bind(this)
 
   }
 
-  componentDidMount(){
+  // TODO check wht it's called twice
+  componentDidMount() {
     this.refreshList()
   }
+
+  // Data handling methods
 
   refreshList() {
 
@@ -75,7 +80,18 @@ export class EventList extends React.Component<EventListProps, EventListState> {
     })
   }
 
-  handleUpdate(value: Event) {
+  handleErrorFromServer(error: any) {
+    let message = "From server -  unexpected error : "
+    if (error.status === 401) {
+      message = 'Unauthorized request'
+    } else {
+      message = message + error.message
+    }
+    return message;
+  }
+
+
+  addOrUpdateModel(value: Event) {
     if (this.state.typeOfOperation === NEW_TYPE_OF_OPERATION) {
       this.repository.add(value).then(() => {
         this.refreshList()
@@ -97,19 +113,7 @@ export class EventList extends React.Component<EventListProps, EventListState> {
     }
   }
 
-
-  handleErrorFromServer(error: any) {
-    let message = "From server -  unexpected error : "
-    if (error.status === 401) {
-      message = 'Unauthorized request'
-    } else {
-      message = message + error.message
-    }
-    return message;
-  }
-
-
-  onEditButtonClick(eventId: string) {
+  editButtonClick(eventId: string) {
     this.repository.get(eventId).then(result => {
       this.setState({
         showModal: true,
@@ -124,6 +128,18 @@ export class EventList extends React.Component<EventListProps, EventListState> {
     })
   }
 
+  deleteButtonClick(eventId: string) {
+    this.repository.delete(eventId).then(()=> {
+      this.refreshList()
+    }).catch(error => {
+      this.setState({
+        showAlert: true,
+        alertText: this.handleErrorFromServer(error)
+      })
+    })
+  }
+
+  // UI Actions
   onAddButtonClick() {
     this.setState({
       showModal: true,
@@ -136,7 +152,7 @@ export class EventList extends React.Component<EventListProps, EventListState> {
 
     const elements = event.target.elements
     if (elements.length > 0) {
-      this.handleUpdate(this.getFromForm(elements))
+      this.addOrUpdateModel(this.getFromForm(elements))
     }
     this.setState({
       showModal: false
@@ -176,7 +192,7 @@ export class EventList extends React.Component<EventListProps, EventListState> {
       <div>
         <div style={{ textAlign: 'right' }}>
           <ButtonGroup aria-label="Tool bar">
-            <Button variant="success" onClick={() => { this.onAddButtonClick() }}>+Add event</Button>
+            <Button variant="success" onClick={() => { this.onAddButtonClick() }}><IoIosAdd/>Add event</Button>
           </ButtonGroup>
         </div>
         <br />
@@ -188,22 +204,28 @@ export class EventList extends React.Component<EventListProps, EventListState> {
                 <th>Name</th>
                 <th>Loation</th>
                 <th>When?</th>
+                <th>_</th>
               </tr>
             </thead>
             <tbody>
               {
                 this.state.events.map((event) => {
                   return (
-                    <tr>
+                    <tr key={'tr-' + event.id}>
                       <td>
                         <ButtonGroup >
-                          <Button variant="success" onClick={() => this.setState({currentDetails:event})}>Details</Button>
-                          <Button variant="primary" onClick={() => { this.onEditButtonClick(event.id) }}>Edit</Button>
+                          <Button key={'vb-' + event.id} variant="outline-success" onClick={() => this.setState({ currentDetails: event })}><MdPageview /></Button>
+                          <Button key={'eb-' + event.id} variant="outline-success" onClick={() => { this.editButtonClick(event.id) }}><FiEdit /></Button>
                         </ButtonGroup>
                       </td>
                       <td>{event.name}</td>
                       <td>{event.mainLocation}</td>
                       <td>{event.eventDay}</td>
+                      <td>
+                        <ButtonGroup >
+                          <Button key={'db-' + event.id} variant="outline-danger" onClick={() => this.deleteButtonClick(event.id)}><MdDelete /></Button>
+                        </ButtonGroup>
+                      </td>
                     </tr>
                   )
                 })

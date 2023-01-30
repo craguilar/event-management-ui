@@ -17,8 +17,8 @@ function EventDetailsHome() {
     <div>
       <br/>
       <Container>
-        <PageTitle title={"Event :" + currentEvent.name} />
-        <i>{currentEvent.mainLocation}</i>
+        <PageTitle title={"Event : " + currentEvent.name} />
+        <i>{currentEvent.mainLocation} on {currentEvent.eventDay}</i>
       </Container>
       <br/>
       <Container>
@@ -28,13 +28,13 @@ function EventDetailsHome() {
           className="mb-3"
         >
           <Tab eventKey="guest" title="Guests">
-            <GuestList />
+            <GuestList eventId={currentEvent.id}/>
           </Tab>
           <Tab eventKey="expense" title="Expenses" disabled>
-            <GuestList />
+            
           </Tab>
           <Tab eventKey="todo" title="To Do" disabled>
-            <GuestList />
+            
           </Tab>
         </Tabs>
       </Container >
