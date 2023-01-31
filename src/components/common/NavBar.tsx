@@ -17,7 +17,16 @@ export class NavBar extends React.Component<NavBarProps, NavBarState> {
   render() {
     return (
       <Navbar bg="dark" variant="dark" expand="lg">
-        <Navbar.Brand href="/">Event Management</Navbar.Brand>
+        <Navbar.Brand href="/">
+          <img
+            src="mesh-removebg-preview.png"
+            width="30"
+            height="30"
+            className="d-inline-block align-top"
+            alt="Event Service logo"
+          />
+          Event Management
+        </Navbar.Brand>
         <Nav className="me-auto">
           <Nav.Link href="/">Events</Nav.Link>
           <Nav.Link href="about">About</Nav.Link>

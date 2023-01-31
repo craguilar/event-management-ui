@@ -14,6 +14,9 @@ import { PageTitle } from "../common/PageTitle";
 import { FiEdit } from "react-icons/fi";
 import { MdPageview, MdDelete } from "react-icons/md";
 import { IoIosAdd } from "react-icons/io";
+import { GrLocationPin } from "react-icons/gr";
+import { BiTimeFive } from "react-icons/bi";
+
 import moment from "moment";
 
 // Properties
@@ -228,8 +231,12 @@ export class EventList extends React.Component<EventListProps, EventListState> {
               <tr>
                 <th>Actions</th>
                 <th>Name</th>
-                <th>Loation</th>
-                <th>When?</th>
+                <th>
+                  <GrLocationPin /> Location
+                </th>
+                <th>
+                  <BiTimeFive /> When?
+                </th>
                 <th>_</th>
               </tr>
             </thead>

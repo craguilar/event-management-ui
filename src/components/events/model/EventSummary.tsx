@@ -1,7 +1,7 @@
 /**
- * Main car object .
+ * Main EventSummary object .
  * @export
- * @interface CarSummary
+ * @interface EventSummary
  */
 export interface EventSummary {
   id: string;

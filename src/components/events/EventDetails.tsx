@@ -22,7 +22,12 @@ export class EventDetails extends React.Component<
 > {
   constructor(props: EventDetailsProps) {
     super(props);
-    this.state = { startDate: (props.current.eventDay != undefined ? new Date(props.current.eventDay) : new Date()) };
+    this.state = {
+      startDate:
+        props.current.eventDay != undefined
+          ? new Date(props.current.eventDay)
+          : new Date(),
+    };
     // See https://stackoverflow.com/questions/59490111/react-typeerror-undefined-onsubmit
     this.onFormSubmit = this.onFormSubmit.bind(this);
   }
