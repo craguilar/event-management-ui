@@ -29,7 +29,7 @@ export class NavBar extends React.Component<NavBarProps, NavBarState> {
         </Navbar.Brand>
         <Nav className="me-auto">
           <Nav.Link href="/">Events</Nav.Link>
-          <Nav.Link href="about">About</Nav.Link>
+          <Nav.Link href="/about">About</Nav.Link>
           <Navbar.Toggle />
         </Nav>
         <Container>
