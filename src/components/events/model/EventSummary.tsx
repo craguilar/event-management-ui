@@ -1,5 +1,5 @@
 /**
- * Main car object . 
+ * Main car object .
  * @export
  * @interface CarSummary
  */

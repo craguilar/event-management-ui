@@ -1,5 +1,5 @@
 module.exports = {
   resolve: {
-    fallback: { "url": require.resolve("url/") }
-  }
+    fallback: { url: require.resolve("url/") },
+  },
 };

@@ -2,198 +2,209 @@ import * as React from "react";
 import { GuestDetail } from "./GuestDetails";
 import Guest from "./model/Guest";
 import { GuestRepository } from "./GuestRepository";
-import DataTable from 'react-data-table-component';
-import ButtonGroup from "react-bootstrap/ButtonGroup"
-import Button from "react-bootstrap/Button"
-import Modal from "react-bootstrap/Modal"
-import { IoIosAdd } from "react-icons/io"
-import { CgExport } from "react-icons/cg"
-import {  MdDelete } from "react-icons/md";
-import Alert from "react-bootstrap/Alert"
+import DataTable from "react-data-table-component";
+import ButtonGroup from "react-bootstrap/ButtonGroup";
+import Button from "react-bootstrap/Button";
+import Modal from "react-bootstrap/Modal";
+import { IoIosAdd } from "react-icons/io";
+import { CgExport } from "react-icons/cg";
+import { MdDelete } from "react-icons/md";
+import Alert from "react-bootstrap/Alert";
 
-// Properties 
+// Properties
 export interface GuestListProps {
-  eventId: string
+  eventId: string;
 }
 
 export interface GuestListState {
-  guests: Guest[],
-  selected: Guest[],
-  showModal: boolean,
-  showAlert: boolean,
-  alertText: string,
-  toggledClearRows: boolean
+  guests: Guest[];
+  selected: Guest[];
+  showModal: boolean;
+  showAlert: boolean;
+  alertText: string;
+  toggledClearRows: boolean;
 }
 
 export class GuestList extends React.Component<GuestListProps, GuestListState> {
-
-
   private repository = new GuestRepository();
   private detailsComponent: React.RefObject<GuestDetail>;
 
   private columns = [
     {
-      name: 'First Name',
-      selector: (row: any) => row.firstName,
-      sortable: true
+      name: "First Name",
+      selector: (row: Guest) => row.firstName,
+      sortable: true,
     },
     {
-      name: 'Last Name',
+      name: "Last Name",
       selector: (row: any) => row.lastName,
-      sortable: true
+      sortable: true,
     },
     {
-      name: 'Guest of',
+      name: "Guest of",
       selector: (row: any) => row.guestOf,
     },
     {
-      name: 'Email',
+      name: "Email",
       selector: (row: any) => row.email,
     },
     {
-      name: 'Phone',
+      name: "Phone",
       selector: (row: any) => row.phone,
     },
     {
-      name: 'Tentative',
-      selector: (row: any) => row.isTentative,
+      name: "Tentative",
+      selector: (row: any) => (row.isTentative ? "Yes" : "No"),
     },
     {
-      name: 'Country',
+      name: "Country",
       selector: (row: any) => row.country,
-      sortable: true
+      sortable: true,
     },
     {
-      name: 'State',
+      name: "State",
       selector: (row: any) => row.state,
     },
     {
-      name: 'No. Of seats',
+      name: "No. Of seats",
       selector: (row: any) => row.numberOfSeats,
-    }
-
+    },
   ];
 
   constructor(props: GuestListProps) {
-    super(props)
-    this.state = { guests: [], showAlert: false, alertText: '', showModal: false, selected: [],toggledClearRows: false }
+    super(props);
+    this.state = {
+      guests: [],
+      showAlert: false,
+      alertText: "",
+      showModal: false,
+      selected: [],
+      toggledClearRows: false,
+    };
     this.detailsComponent = React.createRef();
     // TODO: Do I really need this?
-    this.handleAlertClose = this.handleAlertClose.bind(this)
-    this.handleModalClose = this.handleModalClose.bind(this)
-    this.onSelectedRows = this.onSelectedRows.bind(this)
+    this.handleAlertClose = this.handleAlertClose.bind(this);
+    this.handleModalClose = this.handleModalClose.bind(this);
+    this.onSelectedRows = this.onSelectedRows.bind(this);
   }
 
   // TODO check wht it's called twice
   componentDidMount() {
-    this.refreshList()
+    this.refreshList();
   }
 
   // Data handling methods
 
   refreshList() {
-    this.repository.list(this.props.eventId != undefined ? this.props.eventId : '-').then(results => {
-      this.setState({
-        guests: results
+    this.repository
+      .list(this.props.eventId != undefined ? this.props.eventId : "-")
+      .then(results => {
+        this.setState({
+          guests: results,
+        });
       })
-    }).catch(error => {
-      this.setState({
-        showAlert: true,
-        alertText: this.handleErrorFromServer(error)
-      })
-    })
+      .catch(error => {
+        this.setState({
+          showAlert: true,
+          alertText: this.handleErrorFromServer(error),
+        });
+      });
   }
 
   addModel(value: Guest) {
-
-    this.repository.add(this.props.eventId, value).then(() => {
-      this.refreshList()
-    }).catch(error => {
-      this.setState({
-        showAlert: true,
-        alertText: this.handleErrorFromServer(error)
+    this.repository
+      .add(this.props.eventId, value)
+      .then(() => {
+        this.refreshList();
       })
-    })
+      .catch(error => {
+        this.setState({
+          showAlert: true,
+          alertText: this.handleErrorFromServer(error),
+        });
+      });
   }
 
-  handleErrorFromServer(error: any) {
-    const message = "From server -  unexpected error : "
+  handleErrorFromServer(error: Response) {
+    const message = "From server - error : ";
     if (error.status === 401) {
-      return 'Unauthorized request'
+      return "Unauthorized request";
+    } else if (error.status === 400) {
+      return message + "Invalid request";
     }
-    if (error instanceof Response && error.body != undefined) {
-      return message + (error as Response).statusText
+    if (error.statusText != undefined && error.statusText != "") {
+      return message + (error as Response).statusText;
     }
-    return message;
+    return message + " Unexpected , please verify console logs.";
   }
 
   // UI handlers and Components
   onAddButtonClick() {
     this.setState({
-      showModal: true
-    })
+      showModal: true,
+    });
   }
 
-  onSelectedRows(event: any){
+  onSelectedRows(event: any) {
     this.setState({
-      selected: event.selectedRows
-    })
+      selected: event.selectedRows,
+    });
   }
 
-  onDeleteButton(){
-    for(const row of this.state.selected){
-      this.repository.delete(this.props.eventId , row.id).then(() => {
-        // 
-      }).catch(error => {
-        this.setState({
-          showAlert: true,
-          alertText: this.handleErrorFromServer(error)
+  onDeleteButton() {
+    for (const row of this.state.selected) {
+      this.repository
+        .delete(this.props.eventId, row.id)
+        .then(() => {
+          this.refreshList();
+          this.setState((prevState, props) => ({
+            toggledClearRows: !prevState.toggledClearRows,
+            selected: [],
+          }));
         })
-      })
+        .catch(error => {
+          this.setState({
+            showAlert: true,
+            alertText: this.handleErrorFromServer(error),
+          });
+        });
     }
-    this.setState((prevState, props)=>({
-      toggledClearRows : !prevState.toggledClearRows,
-      selected: []
-    }))
-    this.refreshList()
   }
-
 
   handleAlertClose() {
     this.setState({
       showAlert: false,
-      alertText: ''
-    })
+      alertText: "",
+    });
   }
 
   handleModalClose() {
     this.setState({
-      showModal: false
-    })
+      showModal: false,
+    });
   }
 
   onSubmitClick = (event: any) => {
-
-    const elements = event.target.elements
+    const elements = event.target.elements;
     if (elements.length > 0) {
-      this.addModel(this.getFromForm(elements))
+      this.addModel(this.getFromForm(elements));
     }
     this.setState({
-      showModal: false
-    })
-    event.preventDefault()
-  }
+      showModal: false,
+    });
+    event.preventDefault();
+  };
 
   getFromForm(elements: any) {
-    const firstName = elements[0].value
-    const lastName = elements[1].value
-    const email = elements[2].value
-    const phone = elements[3].value
-    const numberOfSeats = parseInt(elements[4].value)
-    const country = elements[5].value
-    const state = elements[6].value
-    const guestOf = elements[7].value
-    const isTentative = elements[8].value == "on"
+    const firstName = elements[0].value;
+    const lastName = elements[1].value;
+    const email = elements[2].value;
+    const phone = elements[3].value;
+    const numberOfSeats = parseInt(elements[4].value);
+    const country = elements[5].value;
+    const state = elements[6].value;
+    const guestOf = elements[7].value;
+    const isTentative = elements[8].checked;
     const guest: Guest = {
       firstName: firstName,
       lastName: lastName,
@@ -203,75 +214,120 @@ export class GuestList extends React.Component<GuestListProps, GuestListState> {
       country: country,
       state: state,
       guestOf: guestOf,
-      isTentative: isTentative
-    }
-    return guest
+      isTentative: isTentative,
+    };
+    return guest;
   }
 
   deleteButton = () => {
-    return <Button onClick={() => { this.onDeleteButton() }} key="delete" variant="danger"><MdDelete />Delete</Button>
-  }
+    return (
+      <Button
+        onClick={() => {
+          this.onDeleteButton();
+        }}
+        key="delete"
+        variant="danger"
+      >
+        <MdDelete />
+        Delete
+      </Button>
+    );
+  };
 
   gridActions = () => {
-    return <ButtonGroup >
-      <Button onClick={() => { this.onAddButtonClick() }} type="button" variant="outline-success"><IoIosAdd />Guest</Button>
-      <Button onClick={() => { this.downloadCSV(this.state.guests) }} type="button" variant="outline-primary"><CgExport /> csv</Button>
-    </ButtonGroup>;
-  }
+    return (
+      <ButtonGroup>
+        <Button
+          onClick={() => {
+            this.onAddButtonClick();
+          }}
+          type="button"
+          variant="outline-success"
+        >
+          <IoIosAdd />
+          Guest
+        </Button>
+        <Button
+          onClick={() => {
+            this.downloadCSV(this.state.guests);
+          }}
+          type="button"
+          variant="outline-primary"
+        >
+          <CgExport /> csv
+        </Button>
+      </ButtonGroup>
+    );
+  };
 
-  // TODO: this looks super ugly 
+  // TODO: this looks super ugly
   render() {
-    return (<div>
-      <Alert show={this.state.showAlert} onClose={this.handleAlertClose} key='alert' variant='warning' dismissible>
-        {this.state.alertText}
-      </Alert>
-      <DataTable
-        columns={this.columns}
-        data={this.state.guests}
-        actions={ this.gridActions()}
-        contextActions={this.deleteButton()}
-        onSelectedRowsChange={this.onSelectedRows}
-        clearSelectedRows={this.state.toggledClearRows}
-        selectableRows
-        pagination
-        highlightOnHover
-      />
-      <Modal show={this.state.showModal} onHide={this.handleModalClose} size="lg" >
-        <Modal.Header closeButton>
-          <Modal.Title>Add guest</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <GuestDetail ref={this.detailsComponent}  onSubmit={this.onSubmitClick} />
-        </Modal.Body>
-      </Modal>
-    </div>)
+    return (
+      <div>
+        <Alert
+          show={this.state.showAlert}
+          onClose={this.handleAlertClose}
+          key="alert"
+          variant="warning"
+          dismissible
+        >
+          {this.state.alertText}
+        </Alert>
+        <DataTable
+          columns={this.columns}
+          data={this.state.guests}
+          actions={this.gridActions()}
+          contextActions={this.deleteButton()}
+          onSelectedRowsChange={this.onSelectedRows}
+          clearSelectedRows={this.state.toggledClearRows}
+          selectableRows
+          pagination
+          highlightOnHover
+        />
+        <Modal
+          show={this.state.showModal}
+          onHide={this.handleModalClose}
+          size="lg"
+        >
+          <Modal.Header closeButton>
+            <Modal.Title>Add guest</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <GuestDetail
+              ref={this.detailsComponent}
+              onSubmit={this.onSubmitClick}
+            />
+          </Modal.Body>
+        </Modal>
+      </div>
+    );
   }
 
   // TODO : Move to utility
   downloadCSV(array: any[]) {
-    const link = document.createElement('a');
+    const link = document.createElement("a");
     let csv = this.convertArrayOfObjectsToCSV(array);
     if (csv == null) return;
 
-    const filename = 'export.csv';
+    const filename = "export.csv";
 
     if (!csv.match(/^data:text\/csv/i)) {
       csv = `data:text/csv;charset=utf-8,${csv}`;
     }
 
-    link.setAttribute('href', encodeURI(csv));
-    link.setAttribute('download', filename);
+    link.setAttribute("href", encodeURI(csv));
+    link.setAttribute("download", filename);
     link.click();
   }
 
   convertArrayOfObjectsToCSV(array: any[]) {
     let result: string;
 
-    const columnDelimiter = ',';
-    const lineDelimiter = '\n';
+    const columnDelimiter = ",";
+    const lineDelimiter = "\n";
     const keys = Object.keys(this.state.guests[0]);
 
-    result = '';
+    result = "";
     result += keys.join(columnDelimiter);
     result += lineDelimiter;
 
@@ -289,6 +345,4 @@ export class GuestList extends React.Component<GuestListProps, GuestListState> {
 
     return result;
   }
-
-
 }

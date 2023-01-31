@@ -1,11 +1,9 @@
 import * as React from "react";
 
-
-// Properties 
+// Properties
 export interface PageTitleProps {
   title: string;
 }
-
 
 export class PageTitle extends React.Component<PageTitleProps> {
   render() {
@@ -13,6 +11,6 @@ export class PageTitle extends React.Component<PageTitleProps> {
       <div>
         <h3>{this.props.title}</h3>
       </div>
-    )
+    );
   }
 }

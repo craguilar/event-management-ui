@@ -1,5 +1,5 @@
 /**
- * Main Guest object . 
+ * Main Guest object .
  * @export
  * @interface Guest
  */

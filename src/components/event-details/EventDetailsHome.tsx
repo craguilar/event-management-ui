@@ -1,45 +1,49 @@
 import * as React from "react";
-import Tab from 'react-bootstrap/Tab';
-import Tabs from 'react-bootstrap/Tabs';
+import Tab from "react-bootstrap/Tab";
+import Tabs from "react-bootstrap/Tabs";
 import Container from "react-bootstrap/Container";
 import { PageTitle } from "../common/PageTitle";
 import { GuestList } from "../guests/GuestList";
-import { useLocation } from "react-router";
+import { useLocation, useNavigate } from "react-router";
 import { EventSummary } from "../events/model/EventSummary";
+import CloseButton from "react-bootstrap/CloseButton";
 
+import moment from "moment";
 
 function EventDetailsHome() {
-
   const { state } = useLocation();
   const currentEvent: EventSummary = state;
+  const navigation = useNavigate();
 
   return (
     <div>
-      <br/>
+      <br />
       <Container>
         <PageTitle title={"Event : " + currentEvent.name} />
-        <i>{currentEvent.mainLocation} on {currentEvent.eventDay}</i>
+        <i>
+          {currentEvent.mainLocation} on{" "}
+          {moment(currentEvent.eventDay).format(
+            "dddd, MMMM Do YYYY, h:mm:ss a"
+          )}
+        </i>
       </Container>
-      <br/>
+      <br />
       <Container>
+        <CloseButton className="float-end" onClick={() => navigation("/")} />
         <Tabs
           defaultActiveKey="guest"
           id="uncontrolled-tab-example"
           className="mb-3"
         >
           <Tab eventKey="guest" title="Guests">
-            <GuestList eventId={currentEvent.id}/>
+            <GuestList eventId={currentEvent.id} />
           </Tab>
-          <Tab eventKey="expense" title="Expenses" disabled>
-            
-          </Tab>
-          <Tab eventKey="todo" title="To Do" disabled>
-            
-          </Tab>
+          <Tab eventKey="expense" title="Expenses" disabled></Tab>
+          <Tab eventKey="todo" title="To Do" disabled></Tab>
         </Tabs>
-      </Container >
-    </div >
-  )
+      </Container>
+    </div>
+  );
 }
 
 export default EventDetailsHome;

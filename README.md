@@ -45,6 +45,10 @@ See the section about [deployment](https://facebook.github.io/create-react-app/d
 
 ESLint validation.
 
+### `yarn format`
+
+Automatically format your code.
+
 ## Amplify
 
 amplify configure
@@ -64,6 +68,12 @@ AMPLIFY_GOOGLE_CLIENT_SECRET
 1. https://react-bootstrap.netlify.app/components/alerts
 1. https://github.com/jbetancur/react-data-table-component
 1. https://react-icons.github.io/react-icons
+1. https://www.npmjs.com/package/react-datepicker
+1. https://momentjs.com/timezone/docs/
+
+## Contributing 
+
+1. 
 
 ## Learn More
 
@@ -73,6 +83,6 @@ To learn React, check out the [React documentation](https://reactjs.org/).
 
 ## ToDo
 
-1. https://www.npmjs.com/package/react-places-autocomplete?activeTab=readme
-1. https://github.com/primefaces/primereact
-1. https://www.npmjs.com/package/react-datepicker
+1. Review https://www.npmjs.com/package/react-places-autocomplete?activeTab=readme
+1. Review https://github.com/primefaces/primereact
+1. Implement dependency check script https://github.com/depcheck/depcheck
