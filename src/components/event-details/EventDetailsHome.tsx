@@ -4,6 +4,7 @@ import Tabs from "react-bootstrap/Tabs";
 import Container from "react-bootstrap/Container";
 import { PageTitle } from "../common/PageTitle";
 import { GuestList } from "../guests/GuestList";
+import ToDo from "../todo/ToDo"
 import { useLocation, useNavigate } from "react-router";
 import { EventSummary } from "../events/model/EventSummary";
 import CloseButton from "react-bootstrap/CloseButton";
@@ -30,16 +31,16 @@ function EventDetailsHome() {
       <br />
       <Container>
         <CloseButton className="float-end" onClick={() => navigation("/")} />
-        <Tabs
-          defaultActiveKey="guest"
-          id="uncontrolled-tab-example"
-          className="mb-3"
-        >
+        <Tabs defaultActiveKey="guest" id="uncontrolled-tab-example" className="mb-3">
           <Tab eventKey="guest" title="Guests">
             <GuestList eventId={currentEvent.id} />
           </Tab>
-          <Tab eventKey="expense" title="Expenses" disabled></Tab>
-          <Tab eventKey="todo" title="To Do" disabled></Tab>
+          <Tab eventKey="expense" title="Expenses" disabled>
+
+          </Tab>
+          <Tab eventKey="todo" title="To Do" >
+            <ToDo />
+          </Tab>
         </Tabs>
       </Container>
     </div>

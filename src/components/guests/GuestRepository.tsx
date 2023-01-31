@@ -11,7 +11,7 @@ export class GuestRepository {
   waitUser = () =>
     Auth.currentSession()
       .then((res: CognitoUserSession) => {
-        const accessToken = res.getAccessToken();
+        const accessToken = res.getIdToken();
         const jwt = accessToken.getJwtToken();
         this.apiConfigurationParams = {
           basePath: api_details.base_endpoint,
