@@ -10952,6 +10952,11 @@ react-app-polyfill@^3.0.0:
     regenerator-runtime "^0.13.9"
     whatwg-fetch "^3.6.2"
 
+react-bootstrap-tagsinput@^0.7.6:
+  version "0.7.6"
+  resolved "https://registry.yarnpkg.com/react-bootstrap-tagsinput/-/react-bootstrap-tagsinput-0.7.6.tgz#07583a9322062f12bf4aa622bbfcb1983144b73c"
+  integrity sha512-sO9sCPrOe1n9Q8ta+lOHxGI6crZ7cQjW8EUDgyru5X43MIpKT2rqfus2xWcsxbhCXkWH8QvJd+9v9J6ouUUOkA==
+
 react-bootstrap@^2.7.0:
   version "2.7.0"
   resolved "https://registry.yarnpkg.com/react-bootstrap/-/react-bootstrap-2.7.0.tgz#4a8f0311bccac477dc925366763c536f46e4393b"

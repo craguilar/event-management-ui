@@ -16,12 +16,11 @@ import { MdPageview, MdDelete } from "react-icons/md";
 import { IoIosAdd } from "react-icons/io";
 import { GrLocationPin } from "react-icons/gr";
 import { BiTimeFive } from "react-icons/bi";
-
 import moment from "moment";
 
 // Properties
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface EventListProps {}
+export interface EventListProps { }
 
 // State
 export interface EventListState {
@@ -57,7 +56,7 @@ export class EventList extends React.Component<EventListProps, EventListState> {
       showAlert: false,
       alertText: "",
       typeOfOperation: NEW_TYPE_OF_OPERATION,
-      current: {} as Event,
+      current: {} as Event
     };
     // https://stackoverflow.com/questions/59490111/react-typeerror-undefined-onsubmit
     this.eventDetailsComponent = React.createRef();
@@ -177,6 +176,7 @@ export class EventList extends React.Component<EventListProps, EventListState> {
     }
     this.setState({
       showModal: false,
+      current: {} as Event
     });
     event.preventDefault();
   };
@@ -187,6 +187,7 @@ export class EventList extends React.Component<EventListProps, EventListState> {
     const date = mainEventDay.toISOString();
     const description = elements[3].value;
     const event: Event = {
+      id: this.state.current.id != undefined && this.state.current.id != "" ? this.state.current.id : "",
       name: name,
       mainLocation: mainLocation,
       eventDay: date,
@@ -279,7 +280,7 @@ export class EventList extends React.Component<EventListProps, EventListState> {
                           key={"db-" + event.id}
                           variant="outline-danger"
                           onClick={() => this.deleteButtonClick(event.id)}
-                        >
+                          disabled>
                           <MdDelete />
                         </Button>
                       </ButtonGroup>
