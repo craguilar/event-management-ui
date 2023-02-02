@@ -1,5 +1,6 @@
 import { Event } from "./model/Event";
 import { EventSummary } from "./model/EventSummary";
+import { EventSharedEmails } from "./model/EventSharedEmails";
 import api_details from "../../api-exports";
 import { ConfigurationParameters } from "../api-configuration";
 import { Auth } from "aws-amplify";
@@ -133,6 +134,51 @@ export class EventRepository {
     }).then(response => {
       if (response.status >= 200 && response.status < 300) {
         return "";
+      } else {
+        throw response;
+      }
+    });
+  }
+
+  async listSharedEmails(eventId: string): Promise<EventSharedEmails> {
+    await this.waitUser();
+    return fetch(this.apiConfigurationParams.basePath + `/eventsShared/` + eventId, {
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        Authorization:
+          "Bearer " +
+          (this.apiConfigurationParams.accessToken != undefined
+            ? this.apiConfigurationParams.accessToken
+            : "-"),
+      },
+    }).then(response => {
+      if (response.status >= 200 && response.status < 300) {
+        return response.json();
+      } else {
+        throw response;
+      }
+    });
+  }
+
+  // Share emails
+  async updateSharedEmails(sharedEmails: EventSharedEmails): Promise<EventSharedEmails> {
+    await this.waitUser();
+    return fetch(this.apiConfigurationParams.basePath + `/events/actions/share`, {
+      method: "Put",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        Authorization:
+          "Bearer " +
+          (this.apiConfigurationParams.accessToken != undefined
+            ? this.apiConfigurationParams.accessToken
+            : "-"),
+      },
+      body: JSON.stringify(sharedEmails),
+    }).then(response => {
+      if (response.status >= 200 && response.status < 300) {
+        return response.json();
       } else {
         throw response;
       }

@@ -5,9 +5,6 @@ import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Button from "react-bootstrap/Button";
 import DatePicker from "react-datepicker";
-import InputGroup from "react-bootstrap/InputGroup";
-import { InputTags } from 'react-bootstrap-tagsinput';
-import { IoIosAdd } from "react-icons/io";
 import "react-datepicker/dist/react-datepicker.css";
 
 export interface EventDetailsProps {
@@ -17,8 +14,6 @@ export interface EventDetailsProps {
 
 export interface EventDetailsState {
   startDate: Date;
-  // 
-  tags: string[]
 }
 
 export class EventDetails extends React.Component<EventDetailsProps, EventDetailsState> {
@@ -28,8 +23,7 @@ export class EventDetails extends React.Component<EventDetailsProps, EventDetail
   constructor(props: EventDetailsProps) {
     super(props);
     this.state = {
-      startDate: props.current.eventDay != undefined ? new Date(props.current.eventDay) : new Date(),
-      tags: []
+      startDate: props.current.eventDay != undefined ? new Date(props.current.eventDay) : new Date()
     };
     // See https://stackoverflow.com/questions/59490111/react-typeerror-undefined-onsubmit
     this.onFormSubmit = this.onFormSubmit.bind(this);
@@ -87,16 +81,6 @@ export class EventDetails extends React.Component<EventDetailsProps, EventDetail
             </Form.Group>
           </Row>
           <br />
-          {false && <InputGroup >
-            <InputTags values={this.state.tags} onTags={(value) =>
-              this.setState({
-                tags: value.values
-              })
-            } />
-            <Button variant="success" id="button-addon1" >
-              <IoIosAdd /> email
-            </Button>
-          </InputGroup>}
           <Form.Group as={Col} controlId="descriptionInput">
             <Form.Label>Description</Form.Label>
             <Form.Control
@@ -107,8 +91,8 @@ export class EventDetails extends React.Component<EventDetailsProps, EventDetail
           </Form.Group>
           <br />
           <Form.Group as={Col}>
-            <Button variant="primary" type="submit">
-              Submit
+            <Button className="float-end" variant="primary" type="submit">
+              Save changes
             </Button>
           </Form.Group>
         </Form>

@@ -1,6 +1,7 @@
 import * as React from "react";
 import { Event } from "./model/Event";
 import { EventSummary } from "./model/EventSummary";
+import { EventSharedEmails } from "./model/EventSharedEmails";
 import { EventDetails } from "./EventDetails";
 import { EventRepository } from "./EventRepository";
 import { Navigate } from "react-router-dom";
@@ -10,12 +11,16 @@ import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import Alert from "react-bootstrap/Alert";
 import Container from "react-bootstrap/Container";
+import InputGroup from "react-bootstrap/InputGroup";
+import { TagsInput } from "react-tag-input-component";
 import { PageTitle } from "../common/PageTitle";
 import { FiEdit } from "react-icons/fi";
-import { MdPageview, MdDelete } from "react-icons/md";
+import { MdDelete, MdIosShare } from "react-icons/md";
 import { IoIosAdd } from "react-icons/io";
 import { GrLocationPin } from "react-icons/gr";
 import { BiTimeFive } from "react-icons/bi";
+import { TbListDetails } from "react-icons/tb";
+
 import moment from "moment";
 
 // Properties
@@ -26,11 +31,15 @@ export interface EventListProps { }
 export interface EventListState {
   events: EventSummary[];
   showModal: boolean;
+  showShareModal: boolean;
   typeOfOperation: string;
   current: Event;
-  currentDetails?: Event;
+  currentSelectedSummary: Event;
   showAlert: boolean;
   alertText: string;
+  clickView: boolean;
+  //TODO: Not sure it belongs here
+  sharedEmails: string[];
 }
 
 /**
@@ -42,6 +51,8 @@ export interface EventListState {
  */
 const NEW_TYPE_OF_OPERATION = "New";
 const UPDATE_TYPE_OF_OPERATION = "Update";
+// Credit to https://github.com/angular/angular.js/blob/65f800e19ec669ab7d5abbd2f6b82bf60110651a/src/ng/directive/input.js#L27
+const EMAIL_REGEXP = /^(?=.{1,254}$)(?=.{1,64}@)[-!#$%&'*+/0-9=?A-Z^_`a-z{|}~]+(\.[-!#$%&'*+/0-9=?A-Z^_`a-z{|}~]+)*@[A-Za-z0-9]([A-Za-z0-9-]{0,61}[A-Za-z0-9])?(\.[A-Za-z0-9]([A-Za-z0-9-]{0,61}[A-Za-z0-9])?)*$/;
 
 export class EventList extends React.Component<EventListProps, EventListState> {
   private repository = new EventRepository();
@@ -53,15 +64,21 @@ export class EventList extends React.Component<EventListProps, EventListState> {
     this.state = {
       events: [],
       showModal: false,
+      showShareModal: false,
       showAlert: false,
       alertText: "",
       typeOfOperation: NEW_TYPE_OF_OPERATION,
-      current: {} as Event
+      current: {} as Event,
+      clickView: false,
+      sharedEmails: [],
+      currentSelectedSummary: {} as Event,
     };
     // https://stackoverflow.com/questions/59490111/react-typeerror-undefined-onsubmit
     this.eventDetailsComponent = React.createRef();
     this.handleModalClose = this.handleModalClose.bind(this);
+    this.handleShareClose = this.handleShareClose.bind(this);
     this.handleAlertClose = this.handleAlertClose.bind(this);
+    this.onEmailsShared = this.onEmailsShared.bind(this);
   }
 
   // TODO check wht it's called twice
@@ -70,7 +87,6 @@ export class EventList extends React.Component<EventListProps, EventListState> {
   }
 
   // Data handling methods
-
   refreshList() {
     this.repository
       .list()
@@ -146,7 +162,7 @@ export class EventList extends React.Component<EventListProps, EventListState> {
       });
   }
 
-  deleteButtonClick(eventId: string) {
+  deleteEvent(eventId: string) {
     this.repository
       .delete(eventId)
       .then(() => {
@@ -154,6 +170,58 @@ export class EventList extends React.Component<EventListProps, EventListState> {
       })
       .catch(error => {
         this.setState({
+          showAlert: true,
+          alertText: this.handleErrorFromServer(error),
+        });
+      });
+  }
+
+
+  updateSharedEvent() {
+    if (this.state.sharedEmails.length == 0) {
+      return;
+    }
+    if (this.state.currentSelectedSummary.id == undefined || this.state.currentSelectedSummary.id == "") {
+      this.setState({
+        showAlert: true,
+        alertText: "Error the current selected event context is empty",
+      });
+    }
+    const sharedEmails: EventSharedEmails = {
+      eventId: this.state.currentSelectedSummary.id != undefined ? this.state.currentSelectedSummary.id : "",
+      sharedEmails: this.state.sharedEmails
+    };
+    // Then save
+    this.repository
+      .updateSharedEmails(sharedEmails)
+      .then(() => {
+        this.setState({
+          showShareModal: false,
+          sharedEmails: []
+        });
+      })
+      .catch(error => {
+        this.setState({
+          showShareModal: false,
+          showAlert: true,
+          alertText: this.handleErrorFromServer(error),
+        });
+      });
+
+  }
+
+  handleShareOpen(event: EventSummary) {
+    this.repository
+      .listSharedEmails(event.id)
+      .then((response) => {
+        this.setState({ 
+          sharedEmails: response.sharedEmails,
+          currentSelectedSummary: event, 
+          showShareModal: true })
+      })
+      .catch(error => {
+        this.setState({
+          showShareModal: false,
           showAlert: true,
           alertText: this.handleErrorFromServer(error),
         });
@@ -181,6 +249,7 @@ export class EventList extends React.Component<EventListProps, EventListState> {
     event.preventDefault();
   };
 
+
   getFromForm(elements: any, mainEventDay: Date) {
     const name = elements[0].value;
     const mainLocation = elements[1].value;
@@ -196,6 +265,17 @@ export class EventList extends React.Component<EventListProps, EventListState> {
     return event;
   }
 
+
+  onEmailsShared(value: string[]) {
+
+    if (value == null || value == undefined) {
+      return;
+    }
+    this.setState({
+      sharedEmails: value
+    })
+  }
+
   handleAlertClose() {
     this.setState({
       showAlert: false,
@@ -206,6 +286,12 @@ export class EventList extends React.Component<EventListProps, EventListState> {
   handleModalClose() {
     this.setState({
       showModal: false,
+    });
+  }
+
+  handleShareClose() {
+    this.setState({
+      showShareModal: false,
     });
   }
 
@@ -251,10 +337,10 @@ export class EventList extends React.Component<EventListProps, EventListState> {
                           key={"vb-" + event.id}
                           variant="outline-success"
                           onClick={() =>
-                            this.setState({ currentDetails: event })
+                            this.setState({ currentSelectedSummary: event, clickView: true })
                           }
                         >
-                          <MdPageview />
+                          <TbListDetails />
                         </Button>
                         <Button
                           key={"eb-" + event.id}
@@ -264,6 +350,11 @@ export class EventList extends React.Component<EventListProps, EventListState> {
                           }}
                         >
                           <FiEdit />
+                        </Button>
+                        <Button key={"sb-" + event.id}
+                          variant="outline-success"
+                          onClick={() => this.handleShareOpen(event)}>
+                          <MdIosShare />
                         </Button>
                       </ButtonGroup>
                     </td>
@@ -279,7 +370,7 @@ export class EventList extends React.Component<EventListProps, EventListState> {
                         <Button
                           key={"db-" + event.id}
                           variant="outline-danger"
-                          onClick={() => this.deleteButtonClick(event.id)}
+                          onClick={() => this.deleteEvent(event.id)}
                           disabled>
                           <MdDelete />
                         </Button>
@@ -289,10 +380,10 @@ export class EventList extends React.Component<EventListProps, EventListState> {
                 );
               })}
             </tbody>
-            {this.state.currentDetails && (
+            {this.state.clickView && (
               <Navigate
                 to="/details"
-                state={this.state.currentDetails}
+                state={this.state.currentSelectedSummary}
                 replace={true}
               />
             )}
@@ -335,7 +426,39 @@ export class EventList extends React.Component<EventListProps, EventListState> {
             />
           </Modal.Body>
         </Modal>
+        <Modal
+          show={this.state.showShareModal}
+          onHide={this.handleShareClose}
+        >
+          <Modal.Header closeButton>
+            <Modal.Title>Share event</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <p>You can share your event with others! Add an email below and <b style={{ color: "blue" }}>hit enter</b> , when you are ready click save!</p>
+            <InputGroup >
+              <TagsInput
+                name="emails"
+                placeHolder="Enter emails ..."
+                beforeAddValidate={this.validateEmail}
+                value={this.state.sharedEmails}
+                onExisting={(value) => alert('Already added ' + value)}
+                onChange={this.onEmailsShared} />
+            </InputGroup>
+            <i>NOTE: Remove emails is not supported on save </i>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="primary" onClick={() => { this.updateSharedEvent(); }}>Save changes</Button>
+          </Modal.Footer>
+        </Modal>
       </div>
     );
+  }
+
+  // TODO: Utility should move there
+  validateEmail(tag: string): boolean {
+    if (!EMAIL_REGEXP.test(tag)) {
+      return false;
+    }
+    return true
   }
 }

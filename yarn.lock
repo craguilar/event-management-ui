@@ -10952,11 +10952,6 @@ react-app-polyfill@^3.0.0:
     regenerator-runtime "^0.13.9"
     whatwg-fetch "^3.6.2"
 
-react-bootstrap-tagsinput@^0.7.6:
-  version "0.7.6"
-  resolved "https://registry.yarnpkg.com/react-bootstrap-tagsinput/-/react-bootstrap-tagsinput-0.7.6.tgz#07583a9322062f12bf4aa622bbfcb1983144b73c"
-  integrity sha512-sO9sCPrOe1n9Q8ta+lOHxGI6crZ7cQjW8EUDgyru5X43MIpKT2rqfus2xWcsxbhCXkWH8QvJd+9v9J6ouUUOkA==
-
 react-bootstrap@^2.7.0:
   version "2.7.0"
   resolved "https://registry.yarnpkg.com/react-bootstrap/-/react-bootstrap-2.7.0.tgz#4a8f0311bccac477dc925366763c536f46e4393b"
@@ -11208,6 +11203,11 @@ react-style-singleton@^2.2.1:
     get-nonce "^1.0.0"
     invariant "^2.2.4"
     tslib "^2.0.0"
+
+react-tag-input-component@^2.0.2:
+  version "2.0.2"
+  resolved "https://registry.yarnpkg.com/react-tag-input-component/-/react-tag-input-component-2.0.2.tgz#f62f013c6a535141dd1c6c3a88858223170150f1"
+  integrity sha512-dydI9luVwwv9vrjE5u1TTnkcOVkOVL6mhFti8r6hLi78V2F2EKWQOLptURz79UYbDHLSk6tnbvGl8FE+sMpADg==
 
 react-transition-group@^4.4.2:
   version "4.4.5"
