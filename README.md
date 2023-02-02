@@ -70,10 +70,7 @@ AMPLIFY_GOOGLE_CLIENT_SECRET
 1. https://react-icons.github.io/react-icons
 1. https://www.npmjs.com/package/react-datepicker
 1. https://momentjs.com/timezone/docs/
-
-## Contributing 
-
-1. 
+1. https://www.npmjs.com/package/react-tag-input-component
 
 ## Learn More
 
@@ -83,6 +80,12 @@ To learn React, check out the [React documentation](https://reactjs.org/).
 
 ## ToDo
 
-1. Review https://www.npmjs.com/package/react-places-autocomplete?activeTab=readme
-1. Review https://github.com/primefaces/primereact
+1. Implement expenses.
+1. Implement internazionalization
+1. Implement Edit guests.
+1. Implement Edit ToDos.
+1. Implement Remove Shared.
+1. Review for places dropdown https://www.npmjs.com/package/react-places-autocomplete?activeTab=readme
+1. Add profile picture.
+1. Review better UI components https://github.com/primefaces/primereact or https://rsuitejs.com/components/placeholder/
 1. Implement dependency check script https://github.com/depcheck/depcheck
