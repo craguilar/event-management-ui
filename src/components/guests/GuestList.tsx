@@ -242,7 +242,7 @@ export class GuestList extends React.Component<GuestListProps, GuestListState> {
             this.onAddButtonClick();
           }}
           type="button"
-          variant="outline-success"
+          variant="success"
         >
           <IoIosAdd />
           Guest
@@ -252,7 +252,7 @@ export class GuestList extends React.Component<GuestListProps, GuestListState> {
             this.downloadCSV(this.state.guests);
           }}
           type="button"
-          variant="outline-primary"
+          variant="primary"
         >
           <CgExport /> csv
         </Button>

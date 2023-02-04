@@ -4,6 +4,7 @@ import Tabs from "react-bootstrap/Tabs";
 import Container from "react-bootstrap/Container";
 import { PageTitle } from "../common/PageTitle";
 import { GuestList } from "../guests/GuestList";
+import { ExpensesList } from "../expenses/ExpensesList";
 import ToDo from "../todo/ToDo";
 import { useLocation, useNavigate, Navigate } from "react-router";
 import { EventSummary } from "../events/model/EventSummary";
@@ -13,6 +14,7 @@ import { TbReportMoney } from "react-icons/tb";
 import { FcTodoList } from "react-icons/fc";
 
 import moment from "moment";
+
 
 function EventDetailsHome() {
   const { state } = useLocation();
@@ -25,6 +27,7 @@ function EventDetailsHome() {
     <div>
       <br />
       <Container>
+        <CloseButton className="float-end" onClick={() => navigation("/")} />
         <PageTitle title={"Event : " + currentEvent.name} />
         <i>
           {currentEvent.mainLocation} on{" "}
@@ -35,7 +38,7 @@ function EventDetailsHome() {
       </Container>
       <br />
       <Container>
-        <CloseButton className="float-end" onClick={() => navigation("/")} />
+
         <Tabs
           defaultActiveKey="guest"
           id="uncontrolled-tab-example"
@@ -58,8 +61,9 @@ function EventDetailsHome() {
                 <TbReportMoney /> Expenses
               </span>
             }
-            disabled
-          ></Tab>
+          >
+            <ExpensesList eventId={currentEvent.id} />
+          </Tab>
           <Tab
             eventKey="todo"
             title={

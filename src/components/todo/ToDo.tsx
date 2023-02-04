@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Task from "./model/Task";
+import { TaskRepository } from "./TaskRepository";
 import Container from "react-bootstrap/Container";
 import ListGroup from "react-bootstrap/ListGroup";
 import Button from "react-bootstrap/Button";
@@ -8,7 +9,6 @@ import InputGroup from "react-bootstrap/InputGroup";
 import { IoIosAdd } from "react-icons/io";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
-import { TaskRepository } from "./TaskRepository";
 import Alert from "react-bootstrap/Alert";
 import Badge from "react-bootstrap/Badge";
 
@@ -162,8 +162,9 @@ function ToDo(props: ToDoProps) {
             <ListGroup>
               {pendingTasks.map(todo => {
                 return (
-                  <ListGroup.Item>
+                  <ListGroup.Item  key={"ig-todo" + todo.id}>
                     <input
+                      key={"input-todo" + todo.id}
                       type="checkbox"
                       onChange={e => {
                         onMarkAsDone(e, todo);
@@ -185,8 +186,9 @@ function ToDo(props: ToDoProps) {
             <ListGroup>
               {completedTasks.map(todo => {
                 return (
-                  <ListGroup.Item>
+                  <ListGroup.Item key={"lg" + todo.id}>
                     <input
+                      key={"input" + todo.id}
                       type="checkbox"
                       checked={true}
                       onChange={e => {
@@ -194,7 +196,7 @@ function ToDo(props: ToDoProps) {
                       }}
                     />
                     <s>{" " + todo.name}</s>
-                    <Badge bg="success" className="float-end">
+                    <Badge key={"badge" + todo.id} bg="success" className="float-end">
                       {todo.status}
                     </Badge>
                   </ListGroup.Item>

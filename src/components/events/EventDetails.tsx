@@ -50,7 +50,7 @@ export class EventDetails extends React.Component<EventDetailsProps, EventDetail
               <Form.Control
                 type="text"
                 placeholder="My Birthday"
-                value={this.props.current.name}
+                defaultValue={this.props.current.name}
                 required
               />
             </Col>
