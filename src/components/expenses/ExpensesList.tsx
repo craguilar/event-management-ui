@@ -243,7 +243,7 @@ export class ExpensesList extends React.Component<ExpensesListProps, ExpensesLis
       //id?: string;
       category: event.target[0].value,
       amountProjected: parseInt(event.target[1].value),
-      amountTotal: event.target[2].value != '' ? parseInt(event.target[3].value) : undefined,
+      amountTotal: event.target[2].value != '' ? parseInt(event.target[2].value) : undefined,
     };
     this.addModel(expense);
     this.setState({
