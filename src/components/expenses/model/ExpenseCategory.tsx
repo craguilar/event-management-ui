@@ -18,3 +18,9 @@ export interface Expense {
   timePaidOn: string;
   amountPaid: number;
 }
+
+export interface ExpensesSummary {
+  projectedTotal: number;
+  paidTotal: number;
+  actualTotal: number;
+}

@@ -1,6 +1,6 @@
 import * as React from "react";
 import { ExpensesRepository } from "./ExpensesRepository";
-import { ExpenseCategory, Expense } from "./model/ExpenseCategory";
+import { ExpenseCategory, Expense, ExpensesSummary } from "./model/ExpenseCategory";
 import Alert from "react-bootstrap/Alert";
 import DataTable from "react-data-table-component";
 import ButtonGroup from "react-bootstrap/ButtonGroup";
@@ -24,10 +24,12 @@ export interface ExpensesListProps {
   eventId: string;
 }
 
+
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface ExpensesListState {
   expenses: ExpenseCategory[];
   selected: ExpenseCategory[];
+  summary: ExpensesSummary;
   showAlert: boolean;
   alertText: string;
   toggledClearRows: boolean;
@@ -35,7 +37,7 @@ export interface ExpensesListState {
   expenseCategoryValidated: boolean;
   showExpenseModal: boolean;
   expenseValidated: boolean;
-  //
+  // Selection on individual rows
   currentCategory: ExpenseCategory;
   currentExpenseDate: Date;
 }
@@ -79,6 +81,7 @@ export class ExpensesList extends React.Component<ExpensesListProps, ExpensesLis
     this.state = {
       expenses: [],
       selected: [],
+      summary: {} as ExpensesSummary,
       showAlert: false,
       alertText: "",
       toggledClearRows: false,
@@ -100,8 +103,19 @@ export class ExpensesList extends React.Component<ExpensesListProps, ExpensesLis
     this.repository
       .list(this.props.eventId)
       .then(results => {
+        const calculatedSummary: ExpensesSummary = {
+          projectedTotal: 0,
+          paidTotal: 0,
+          actualTotal: 0
+        };
+        for (const row of results) {
+          calculatedSummary.projectedTotal += (row.amountProjected != undefined ? row.amountProjected : 0.0);
+          calculatedSummary.paidTotal += (row.amountPaid != undefined ? row.amountPaid : 0);
+          calculatedSummary.actualTotal += (row.amountTotal != undefined ? row.amountTotal : 0);
+        }
         this.setState({
           expenses: results,
+          summary: calculatedSummary,
         });
       })
       .catch(error => {
@@ -517,6 +531,7 @@ export class ExpensesList extends React.Component<ExpensesListProps, ExpensesLis
           >
             {this.state.alertText}
           </Alert>
+          <p><b>Projected total $ </b>{this.state.summary.projectedTotal} , <b>Paid total $ </b> {this.state.summary.paidTotal} and <b>Actual total $ </b> {this.state.summary.actualTotal} </p>
           <DataTable
             columns={this.columns}
             data={this.state.expenses}
