@@ -80,11 +80,12 @@ To learn React, check out the [React documentation](https://reactjs.org/).
 
 ## ToDo
 
-1. Implement expenses.
 1. Implement internazionalization
 1. Implement Edit guests.
+1. Implement Edit Expenses.
 1. Implement Edit ToDos.
 1. Implement Remove Shared.
+1. Documen LICENSE's used.
 1. Review for places dropdown https://www.npmjs.com/package/react-places-autocomplete?activeTab=readme
 1. Add profile picture.
 1. Review better UI components https://github.com/primefaces/primereact or https://rsuitejs.com/components/placeholder/
