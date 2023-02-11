@@ -18,6 +18,7 @@ export interface GuestListProps {
 
 export interface GuestListState {
   guests: Guest[];
+  totalGuests: number;
   selected: Guest[];
   showModal: boolean;
   showAlert: boolean;
@@ -80,6 +81,7 @@ export class GuestList extends React.Component<GuestListProps, GuestListState> {
       showModal: false,
       selected: [],
       toggledClearRows: false,
+      totalGuests: 0,
     };
     this.detailsComponent = React.createRef();
     // TODO: Do I really need this?
@@ -99,8 +101,13 @@ export class GuestList extends React.Component<GuestListProps, GuestListState> {
     this.repository
       .list(this.props.eventId != undefined ? this.props.eventId : "-")
       .then(results => {
+        let numberOfSeats = 0;
+        for (const row of results) {
+          numberOfSeats += row.numberOfSeats;
+        }
         this.setState({
           guests: results,
+          totalGuests: numberOfSeats,
         });
       })
       .catch(error => {
@@ -273,6 +280,7 @@ export class GuestList extends React.Component<GuestListProps, GuestListState> {
         >
           {this.state.alertText}
         </Alert>
+        <p><b>Summary Total guests: </b>{this.state.totalGuests}</p>
         <DataTable
           columns={this.columns}
           data={this.state.guests}
