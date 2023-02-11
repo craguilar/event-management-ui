@@ -24,6 +24,11 @@ export interface ExpensesListProps {
   eventId: string;
 }
 
+const FORMATTER = new Intl.NumberFormat('en-US', {
+  style: 'currency',
+  currency: 'USD'
+})
+
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface ExpensesListState {
@@ -59,16 +64,16 @@ export class ExpensesList extends React.Component<ExpensesListProps, ExpensesLis
     },
     {
       name: "Projected Amount",
-      selector: (row: any) => row.amountProjected,
+      selector: (row: any) => FORMATTER.format(row.amountProjected),
       sortable: true,
     },
     {
       name: "Amount Paid",
-      selector: (row: any) => row.amountPaid,
+      selector: (row: any) => FORMATTER.format(row.amountPaid),
     },
     {
       name: "Amount total",
-      selector: (row: any) => row.amountTotal,
+      selector: (row: any) => FORMATTER.format(row.amountTotal),
     },
     {
       cell: (row: any) => this.rowAddExpensetButton(row),
@@ -495,7 +500,7 @@ export class ExpensesList extends React.Component<ExpensesListProps, ExpensesLis
             return (
               <ListGroup.Item key={"ig-todo" + expense.id}>
                 <Row>
-                  <Col><b style={{ color: "darkcyan" }}>{" " + expense.whoPaid}</b> paid ${expense.amountPaid} on {moment(expense.timePaidOn).format("dddd, MMMM Do YYYY, h:mm:ss a")}</Col>
+                  <Col><b style={{ color: "darkcyan" }}>{" " + expense.whoPaid}</b> paid ${FORMATTER.format(expense.amountPaid)} on {moment(expense.timePaidOn).format("dddd, MMMM Do YYYY, h:mm:ss a")}</Col>
                   <Col>
                     <ButtonGroup>
                       <Button
@@ -531,7 +536,7 @@ export class ExpensesList extends React.Component<ExpensesListProps, ExpensesLis
           >
             {this.state.alertText}
           </Alert>
-          <p><b>Projected total $ </b>{this.state.summary.projectedTotal} , <b>Paid total $ </b> {this.state.summary.paidTotal} and <b>Actual total $ </b> {this.state.summary.actualTotal} </p>
+          <p><b>Summary Projected total </b>{FORMATTER.format(this.state.summary.projectedTotal)} , <b>Paid total </b> {FORMATTER.format(this.state.summary.paidTotal)} and <b>Actual total $ </b> {FORMATTER.format(this.state.summary.actualTotal)} </p>
           <DataTable
             columns={this.columns}
             data={this.state.expenses}
