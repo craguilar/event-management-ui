@@ -65,12 +65,31 @@ AMPLIFY_GOOGLE_CLIENT_SECRET
 
 ## UI Components
 
+Thanks to:
+
 1. https://react-bootstrap.netlify.app/components/alerts
 1. https://github.com/jbetancur/react-data-table-component
 1. https://react-icons.github.io/react-icons
 1. https://www.npmjs.com/package/react-datepicker
 1. https://momentjs.com/timezone/docs/
 1. https://www.npmjs.com/package/react-tag-input-component
+1. Localization https://react.i18next.com/
+
+Included in LICENSE
+
+### How to update LICENSE file?
+
+1. Install license-report:
+
+```bash
+$ npm install -g license-report
+```
+
+Then run:
+
+```bash
+$ license-report --output=markdown > LICENSE
+```
 
 ## Learn More
 
@@ -80,12 +99,10 @@ To learn React, check out the [React documentation](https://reactjs.org/).
 
 ## ToDo
 
-1. Implement internazionalization: https://medium.com/dataseries/how-to-add-localization-to-a-react-app-6b10e7c3ad9e
 1. Implement Edit guests.
 1. Implement Edit ToDos.
 1. Implement Remove Shared.
 1. Identify links and add a href .
-1. Documen LICENSE's used.
 1. Review for places dropdown https://www.npmjs.com/package/react-places-autocomplete?activeTab=readme
 1. Add profile picture.
 1. Review better UI components https://github.com/primefaces/primereact or https://rsuitejs.com/components/placeholder/
