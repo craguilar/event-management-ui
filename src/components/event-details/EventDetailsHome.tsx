@@ -2,6 +2,7 @@ import * as React from "react";
 import Tab from "react-bootstrap/Tab";
 import Tabs from "react-bootstrap/Tabs";
 import Container from "react-bootstrap/Container";
+import { DateFormat } from "../../dataUtils";
 import { PageTitle } from "../common/PageTitle";
 import { GuestList } from "../guests/GuestList";
 import { ExpensesList } from "../expenses/ExpensesList";
@@ -32,7 +33,7 @@ function EventDetailsHome() {
         <i>
           {currentEvent.mainLocation} on{" "}
           {moment(currentEvent.eventDay).format(
-            "dddd, MMMM Do YYYY, h:mm:ss a"
+            DateFormat
           )}
         </i>
       </Container>

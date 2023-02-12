@@ -33,6 +33,7 @@ export class About extends React.Component {
           Enjoy <BsHeartFill style={{ color: "red" }} />!
         </p>
         <p>Carlos</p>
+        <p>P.S Translating all pages to Spanish is a work in progress.</p>
       </Container>
     );
   }

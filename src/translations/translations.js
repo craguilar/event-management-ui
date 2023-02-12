@@ -20,10 +20,11 @@ const resources = {
       "Main event day": "Main event day",
       "Description": "Description",
       Events: "Events",
-      About : "About",
-      Language : "Language",
-      "Profile" : "Profile",
-      "Sign out" : "Sign out"
+      About: "About",
+      Language: "Language",
+      "Profile": "Profile",
+      "Sign out": "Sign out",
+      Expense: "Expense"
     },
   },
   es: {
@@ -42,11 +43,21 @@ const resources = {
       "Main Location": "Lugar",
       "Main event day": "Fecha y hora",
       "Description": "Descripción",
-      Events : "Eventos",
-      About : "Acerca de",
-      "Language" : "Idioma",
-      "Profile" : "Perfil",
-      "Sign out" : "Cerrar sesión"
+      Events: "Eventos",
+      About: "Acerca de",
+      "Language": "Idioma",
+      "Profile": "Perfil",
+      "Sign out": "Cerrar sesión",
+      Expense: "Gasto",
+      "Delete": "Borrar",
+      "Expense Category" : "Categoria de Gasto",
+      "Category" : "Categoria",
+      "Projected Amount" : "Monto projectado",
+      "Total Amount" : "Monto total",
+      "Who Paid?" : "Quien pago?",
+      "Paid Amount" : "Monto pagado",
+      "When?" : "Cuando?",
+      "Summary Projected total " : "Resumen del Monto projectado"
     },
   },
 };

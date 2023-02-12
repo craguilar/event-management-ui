@@ -80,11 +80,11 @@ To learn React, check out the [React documentation](https://reactjs.org/).
 
 ## ToDo
 
-1. Implement internazionalization
+1. Implement internazionalization: https://medium.com/dataseries/how-to-add-localization-to-a-react-app-6b10e7c3ad9e
 1. Implement Edit guests.
-1. Implement Edit Expenses.
 1. Implement Edit ToDos.
 1. Implement Remove Shared.
+1. Identify links and add a href .
 1. Documen LICENSE's used.
 1. Review for places dropdown https://www.npmjs.com/package/react-places-autocomplete?activeTab=readme
 1. Add profile picture.

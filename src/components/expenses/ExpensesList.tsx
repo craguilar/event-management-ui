@@ -1,6 +1,8 @@
 import * as React from "react";
 import { ExpensesRepository } from "./ExpensesRepository";
 import { ExpenseCategory, Expense, ExpensesSummary } from "./model/ExpenseCategory";
+import { DateFormat } from "../../dataUtils";
+import { CURRENCY_FORMATTER } from "../../dataUtils";
 import Alert from "react-bootstrap/Alert";
 import DataTable from "react-data-table-component";
 import ButtonGroup from "react-bootstrap/ButtonGroup";
@@ -16,6 +18,7 @@ import DatePicker from "react-datepicker";
 import { MdDelete } from "react-icons/md";
 import { IoIosAdd } from "react-icons/io";
 import { FiEdit } from "react-icons/fi";
+import { Trans } from 'react-i18next';
 
 import moment from "moment";
 
@@ -23,12 +26,6 @@ import moment from "moment";
 export interface ExpensesListProps {
   eventId: string;
 }
-
-const FORMATTER = new Intl.NumberFormat('en-US', {
-  style: 'currency',
-  currency: 'USD'
-})
-
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface ExpensesListState {
@@ -53,30 +50,30 @@ export class ExpensesList extends React.Component<ExpensesListProps, ExpensesLis
 
   columns = [
     {
-      cell: (row: any) => this.rowEditButton(row),
+      cell: (row: ExpenseCategory) => this.rowEditButton(row),
       button: true,
       width: '50px'
     },
     {
-      name: "Category",
-      selector: (row: any) => row.category,
+      name: <Trans>Category</Trans>,
+      selector: (row: ExpenseCategory) => row.category,
       sortable: true,
     },
     {
-      name: "Projected Amount",
-      selector: (row: any) => FORMATTER.format(row.amountProjected),
+      name: <Trans>Projected Amount</Trans>,
+      selector: (row: ExpenseCategory) => row.amountProjected != undefined ? CURRENCY_FORMATTER.format(row.amountProjected) : 0.0,
       sortable: true,
     },
     {
-      name: "Amount Paid",
-      selector: (row: any) => FORMATTER.format(row.amountPaid),
+      name: <Trans>Paid Amount</Trans>,
+      selector: (row: ExpenseCategory) => row.amountPaid != undefined ? CURRENCY_FORMATTER.format(row.amountPaid) : 0.0,
     },
     {
-      name: "Amount total",
-      selector: (row: any) => FORMATTER.format(row.amountTotal),
+      name: <Trans>Total Amount</Trans>,
+      selector: (row: ExpenseCategory) => row.amountTotal != undefined ? CURRENCY_FORMATTER.format(row.amountTotal) : 0.0,
     },
     {
-      cell: (row: any) => this.rowAddExpensetButton(row),
+      cell: (row: ExpenseCategory) => this.rowAddExpensetButton(row),
       button: true,
     }
   ];
@@ -191,17 +188,6 @@ export class ExpensesList extends React.Component<ExpensesListProps, ExpensesLis
     });
   }
 
-  onAddCategoryButtonClick() {
-    this.setState({
-      showCategoryModal: true,
-    });
-  }
-
-  handleCategoryModalClose() {
-    this.setState({
-      showCategoryModal: false,
-    });
-  }
 
   onAddExpenseButtonClick() {
     this.setState({
@@ -232,6 +218,12 @@ export class ExpensesList extends React.Component<ExpensesListProps, ExpensesLis
     }
   }
 
+  handleCategoryModalClose() {
+    this.setState({
+      currentCategory: {} as ExpenseCategory,
+      showCategoryModal: false,
+    });
+  }
 
   handleExpenseModalClose() {
     this.setState({
@@ -259,13 +251,14 @@ export class ExpensesList extends React.Component<ExpensesListProps, ExpensesLis
       event.stopPropagation();
     }
     const expense: ExpenseCategory = {
-      //id?: string;
+      id: this.state.currentCategory.id != "" ? this.state.currentCategory.id : "",
       category: event.target[0].value,
-      amountProjected: parseInt(event.target[1].value),
-      amountTotal: event.target[2].value != '' ? parseInt(event.target[2].value) : undefined,
+      amountProjected: parseFloat(event.target[1].value),
+      amountTotal: event.target[2].value != '' ? parseFloat(event.target[2].value) : undefined,
     };
     this.addModel(expense);
     this.setState({
+      currentCategory: {} as ExpenseCategory,
       expenseCategoryValidated: true,
       showCategoryModal: false
     });
@@ -290,6 +283,7 @@ export class ExpensesList extends React.Component<ExpensesListProps, ExpensesLis
     this.addModel(category);
 
     this.setState({
+      currentCategory: {} as ExpenseCategory,
       expenseValidated: true,
       showExpenseModal: false
     });
@@ -301,25 +295,32 @@ export class ExpensesList extends React.Component<ExpensesListProps, ExpensesLis
       <ButtonGroup>
         <Button
           onClick={() => {
-            this.onAddCategoryButtonClick();
+            this.setState({
+              currentCategory: {} as ExpenseCategory,
+              showCategoryModal: true,
+            });
           }}
           type="button"
           variant="success"
         >
           <IoIosAdd />
-          Expense
+          <Trans>Expense</Trans>
         </Button>
       </ButtonGroup>
     );
   };
 
-  //TODO: Edit
-  rowEditButton(event: any) {
+  rowEditButton(event: ExpenseCategory) {
     return (<ButtonGroup>
       <Button
         key={"eb-"}
-        variant="outline-success"
-        disabled
+        variant="outline-warning"
+        onClick={() => {
+          this.setState({
+            currentCategory: event,
+            showCategoryModal: true
+          })
+        }}
       >
         <FiEdit />
       </Button>
@@ -352,7 +353,7 @@ export class ExpensesList extends React.Component<ExpensesListProps, ExpensesLis
         variant="danger"
       >
         <MdDelete />
-        Delete
+        <Trans>Delete</Trans>
       </Button>
     );
   }
@@ -365,17 +366,18 @@ export class ExpensesList extends React.Component<ExpensesListProps, ExpensesLis
         size="lg"
       >
         <Modal.Header closeButton>
-          <Modal.Title>Add Expense Category</Modal.Title>
+          <Modal.Title><Trans>Expense Category</Trans></Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Form validated={this.state.expenseCategoryValidated} onSubmit={(form) => this.handleExpenseCategorySubmit(form)}>
             <Row>
               <Form.Group as={Col}>
-                <Form.Label column>Category</Form.Label>
+                <Form.Label column><Trans>Category</Trans></Form.Label>
                 <Col>
                   <Form.Control
                     type="text"
                     placeholder="Food..."
+                    defaultValue={this.state.currentCategory.category}
                     required
                   />
                 </Col>
@@ -387,10 +389,10 @@ export class ExpensesList extends React.Component<ExpensesListProps, ExpensesLis
                 controlId="validationFormik101"
                 className="position-relative"
               >
-                <Form.Label column>Projected Amount</Form.Label>
+                <Form.Label column><Trans>Projected Amount</Trans></Form.Label>
                 <InputGroup className="mb-3">
                   <InputGroup.Text>$</InputGroup.Text>
-                  <Form.Control aria-label="Amount (to the nearest dollar)" type="number" required />
+                  <Form.Control aria-label="Amount (to the nearest dollar)" type="number" step=".01" defaultValue={this.state.currentCategory.amountProjected} required />
                 </InputGroup>
                 <Form.Control.Feedback tooltip>Looks good!</Form.Control.Feedback>
               </Form.Group>
@@ -399,10 +401,10 @@ export class ExpensesList extends React.Component<ExpensesListProps, ExpensesLis
                 controlId="validationFormik102"
                 className="position-relative"
               >
-                <Form.Label column>Total Amount</Form.Label>
+                <Form.Label column><Trans>Total Amount</Trans></Form.Label>
                 <InputGroup className="mb-3">
                   <InputGroup.Text>$</InputGroup.Text>
-                  <Form.Control aria-label="Amount (to the nearest dollar)" />
+                  <Form.Control aria-label="Amount (to the nearest dollar)" type="number" step=".01" defaultValue={this.state.currentCategory.amountTotal} />
                 </InputGroup>
                 <Form.Control.Feedback tooltip>Looks good!</Form.Control.Feedback>
               </Form.Group>
@@ -410,7 +412,7 @@ export class ExpensesList extends React.Component<ExpensesListProps, ExpensesLis
             <br />
             <Form.Group as={Col}>
               <Button className="float-end" variant="primary" type="submit">
-                Save changes
+                <Trans>Save changes</Trans>
               </Button>
             </Form.Group>
           </Form>
@@ -426,14 +428,13 @@ export class ExpensesList extends React.Component<ExpensesListProps, ExpensesLis
         onHide={() => this.handleExpenseModalClose()}
       >
         <Modal.Header closeButton>
-          <Modal.Title>{this.state.currentCategory.category}
-            Expense</Modal.Title>
+          <Modal.Title>{this.state.currentCategory.category} Expense</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Form validated={this.state.expenseValidated} onSubmit={(form) => this.handleExpenseSubmit(form)}>
             <Row>
               <Form.Group as={Col}>
-                <Form.Label column>Who Paid?</Form.Label>
+                <Form.Label column><Trans>Who Paid?</Trans></Form.Label>
                 <Col>
                   <Form.Control
                     type="text"
@@ -449,7 +450,7 @@ export class ExpensesList extends React.Component<ExpensesListProps, ExpensesLis
                 controlId="validationFormik101"
                 className="position-relative"
               >
-                <Form.Label column>Paid Amount</Form.Label>
+                <Form.Label column><Trans>Paid Amount</Trans></Form.Label>
                 <InputGroup className="mb-3">
                   <InputGroup.Text>$</InputGroup.Text>
                   <Form.Control aria-label="Amount (to the nearest dollar)" type="number" required />
@@ -461,7 +462,7 @@ export class ExpensesList extends React.Component<ExpensesListProps, ExpensesLis
                 controlId="validationFormik102"
                 className="position-relative"
               >
-                <Form.Label column>When?</Form.Label>
+                <Form.Label column><Trans>When?</Trans></Form.Label>
                 <DatePicker
                   selected={this.state.currentExpenseDate}
                   onChange={(date: Date) => {
@@ -475,7 +476,7 @@ export class ExpensesList extends React.Component<ExpensesListProps, ExpensesLis
             <br />
             <Form.Group as={Col}>
               <Button className="float-end" variant="primary" type="submit">
-                Save changes
+                <Trans>Save changes</Trans>
               </Button>
             </Form.Group>
           </Form>
@@ -500,7 +501,7 @@ export class ExpensesList extends React.Component<ExpensesListProps, ExpensesLis
             return (
               <ListGroup.Item key={"ig-todo" + expense.id}>
                 <Row>
-                  <Col><b style={{ color: "darkcyan" }}>{" " + expense.whoPaid}</b> paid ${FORMATTER.format(expense.amountPaid)} on {moment(expense.timePaidOn).format("dddd, MMMM Do YYYY, h:mm:ss a")}</Col>
+                  <Col><b style={{ color: "darkcyan" }}>{" " + expense.whoPaid}</b> paid ${CURRENCY_FORMATTER.format(expense.amountPaid)} on {moment(expense.timePaidOn).format(DateFormat)}</Col>
                   <Col>
                     <ButtonGroup>
                       <Button
@@ -536,7 +537,7 @@ export class ExpensesList extends React.Component<ExpensesListProps, ExpensesLis
           >
             {this.state.alertText}
           </Alert>
-          <p><b>Summary Projected total </b>{FORMATTER.format(this.state.summary.projectedTotal)} , <b>Paid total </b> {FORMATTER.format(this.state.summary.paidTotal)} and <b>Actual total $ </b> {FORMATTER.format(this.state.summary.actualTotal)} </p>
+          <p><b><Trans>Summary Projected total </Trans></b>{CURRENCY_FORMATTER.format(this.state.summary.projectedTotal)} , <b>Paid total </b> {CURRENCY_FORMATTER.format(this.state.summary.paidTotal)} and <b>Actual total $ </b> {CURRENCY_FORMATTER.format(this.state.summary.actualTotal)} </p>
           <DataTable
             columns={this.columns}
             data={this.state.expenses}

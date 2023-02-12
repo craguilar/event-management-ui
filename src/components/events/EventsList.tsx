@@ -4,6 +4,7 @@ import { EventSummary } from "./model/EventSummary";
 import { EventSharedEmails } from "./model/EventSharedEmails";
 import { EventDetails } from "./EventDetails";
 import { EventRepository } from "./EventRepository";
+import { validateEmail, DateFormat } from "../../dataUtils";
 import { Navigate } from "react-router-dom";
 import Table from "react-bootstrap/Table";
 import ButtonGroup from "react-bootstrap/ButtonGroup";
@@ -52,8 +53,6 @@ export interface EventListState {
  */
 const NEW_TYPE_OF_OPERATION = "New";
 const UPDATE_TYPE_OF_OPERATION = "Update";
-// Credit to https://github.com/angular/angular.js/blob/65f800e19ec669ab7d5abbd2f6b82bf60110651a/src/ng/directive/input.js#L27
-const EMAIL_REGEXP = /^(?=.{1,254}$)(?=.{1,64}@)[-!#$%&'*+/0-9=?A-Z^_`a-z{|}~]+(\.[-!#$%&'*+/0-9=?A-Z^_`a-z{|}~]+)*@[A-Za-z0-9]([A-Za-z0-9-]{0,61}[A-Za-z0-9])?(\.[A-Za-z0-9]([A-Za-z0-9-]{0,61}[A-Za-z0-9])?)*$/;
 
 export class EventList extends React.Component<EventListProps, EventListState> {
   private repository = new EventRepository();
@@ -366,7 +365,7 @@ export class EventList extends React.Component<EventListProps, EventListState> {
                     <td>{event.mainLocation}</td>
                     <td>
                       {moment(event.eventDay).format(
-                        "dddd, MMMM Do YYYY, h:mm:ss a"
+                        DateFormat
                       )}
                     </td>
                     <td>
@@ -443,7 +442,7 @@ export class EventList extends React.Component<EventListProps, EventListState> {
               <TagsInput
                 name="emails"
                 placeHolder="Enter emails ..."
-                beforeAddValidate={this.validateEmail}
+                beforeAddValidate={validateEmail}
                 value={this.state.sharedEmails}
                 onExisting={(value) => alert('Already added ' + value)}
                 onChange={this.onEmailsShared} />
@@ -458,11 +457,5 @@ export class EventList extends React.Component<EventListProps, EventListState> {
     );
   }
 
-  // TODO: Utility should move there
-  validateEmail(tag: string): boolean {
-    if (!EMAIL_REGEXP.test(tag)) {
-      return false;
-    }
-    return true
-  }
+
 }
