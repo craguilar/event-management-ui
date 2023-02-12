@@ -1,4 +1,5 @@
 import * as React from "react";
+import { Trans } from 'react-i18next';
 
 // Properties
 export interface PageTitleProps {
@@ -9,7 +10,7 @@ export class PageTitle extends React.Component<PageTitleProps> {
   render() {
     return (
       <div>
-        <h3>{this.props.title}</h3>
+        <Trans><h3>{this.props.title}</h3></Trans>
       </div>
     );
   }

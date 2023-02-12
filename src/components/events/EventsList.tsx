@@ -20,6 +20,7 @@ import { IoIosAdd } from "react-icons/io";
 import { GrLocationPin } from "react-icons/gr";
 import { BiTimeFive } from "react-icons/bi";
 import { TbListDetails } from "react-icons/tb";
+import { Trans } from 'react-i18next';
 
 import moment from "moment";
 
@@ -214,10 +215,11 @@ export class EventList extends React.Component<EventListProps, EventListState> {
     this.repository
       .listSharedEmails(event.id)
       .then((response) => {
-        this.setState({ 
+        this.setState({
           sharedEmails: response.sharedEmails,
-          currentSelectedSummary: event, 
-          showShareModal: true })
+          currentSelectedSummary: event,
+          showShareModal: true
+        })
       })
       .catch(error => {
         this.setState({
@@ -307,7 +309,7 @@ export class EventList extends React.Component<EventListProps, EventListState> {
               }}
             >
               <IoIosAdd />
-              Add event
+              <Trans>Add event</Trans>
             </Button>
           </ButtonGroup>
         </div>
@@ -316,13 +318,15 @@ export class EventList extends React.Component<EventListProps, EventListState> {
           <Table striped responsive hover>
             <thead>
               <tr>
-                <th>Actions</th>
-                <th>Name</th>
+                <th><Trans>Actions</Trans></th>
+                <th><Trans>Name</Trans></th>
                 <th>
-                  <GrLocationPin /> Location
+                  <GrLocationPin />
+                  <Trans>Location</Trans>
                 </th>
                 <th>
-                  <BiTimeFive /> When?
+                  <BiTimeFive />
+                  <Trans>When</Trans>?
                 </th>
                 <th>_</th>
               </tr>
@@ -416,7 +420,7 @@ export class EventList extends React.Component<EventListProps, EventListState> {
           size="lg"
         >
           <Modal.Header closeButton>
-            <Modal.Title>{this.state.typeOfOperation} event</Modal.Title>
+            <Modal.Title><Trans>{this.state.typeOfOperation} event</Trans></Modal.Title>
           </Modal.Header>
           <Modal.Body>
             <EventDetails
@@ -431,7 +435,7 @@ export class EventList extends React.Component<EventListProps, EventListState> {
           onHide={this.handleShareClose}
         >
           <Modal.Header closeButton>
-            <Modal.Title>Share event</Modal.Title>
+            <Modal.Title><Trans>Share event</Trans></Modal.Title>
           </Modal.Header>
           <Modal.Body>
             <p>You can share your event with others! Add an email below and <b style={{ color: "blue" }}>hit enter</b> , when you are ready click save!</p>
@@ -447,7 +451,7 @@ export class EventList extends React.Component<EventListProps, EventListState> {
             <i>NOTE: Remove emails is not supported on save </i>
           </Modal.Body>
           <Modal.Footer>
-            <Button variant="primary" onClick={() => { this.updateSharedEvent(); }}>Save changes</Button>
+            <Button variant="primary" onClick={() => { this.updateSharedEvent(); }}><Trans>Save changes</Trans></Button>
           </Modal.Footer>
         </Modal>
       </div>

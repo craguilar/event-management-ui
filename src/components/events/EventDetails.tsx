@@ -5,6 +5,7 @@ import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Button from "react-bootstrap/Button";
 import DatePicker from "react-datepicker";
+import { Trans } from 'react-i18next';
 import "react-datepicker/dist/react-datepicker.css";
 
 export interface EventDetailsProps {
@@ -45,7 +46,7 @@ export class EventDetails extends React.Component<EventDetailsProps, EventDetail
       <div>
         <Form onSubmit={this.onFormSubmit}>
           <Form.Group controlId="plateInput">
-            <Form.Label column>Event Name</Form.Label>
+            <Form.Label column><Trans>Event Name</Trans></Form.Label>
             <Col>
               <Form.Control
                 type="text"
@@ -57,7 +58,7 @@ export class EventDetails extends React.Component<EventDetailsProps, EventDetail
           </Form.Group>
           <Row>
             <Form.Group as={Col} controlId="makeInput">
-              <Form.Label column>Main Location</Form.Label>
+              <Form.Label column><Trans>Main Location</Trans></Form.Label>
               <Col>
                 <Form.Control
                   type="text"
@@ -68,7 +69,7 @@ export class EventDetails extends React.Component<EventDetailsProps, EventDetail
               </Col>
             </Form.Group>
             <Form.Group as={Col} controlId="modelInput">
-              <Form.Label column>Main event day</Form.Label>
+              <Form.Label column><Trans>Main event day</Trans></Form.Label>
               <Col>
                 <DatePicker
                   showTimeSelect
@@ -82,7 +83,7 @@ export class EventDetails extends React.Component<EventDetailsProps, EventDetail
           </Row>
           <br />
           <Form.Group as={Col} controlId="descriptionInput">
-            <Form.Label>Description</Form.Label>
+            <Form.Label><Trans>Description</Trans></Form.Label>
             <Form.Control
               as="textarea"
               rows={rowsInControl}
@@ -92,7 +93,7 @@ export class EventDetails extends React.Component<EventDetailsProps, EventDetail
           <br />
           <Form.Group as={Col}>
             <Button className="float-end" variant="primary" type="submit">
-              Save changes
+              <Trans>Save changes</Trans>
             </Button>
           </Form.Group>
         </Form>
