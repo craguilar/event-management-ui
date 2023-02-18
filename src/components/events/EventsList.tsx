@@ -6,7 +6,7 @@ import { EventDetails } from "./EventDetails";
 import { EventRepository } from "./EventRepository";
 import { validateEmail, DateFormat } from "../../dataUtils";
 import { Navigate } from "react-router-dom";
-import Form from 'react-bootstrap/Form';
+import Form from "react-bootstrap/Form";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Table from "react-bootstrap/Table";
@@ -24,13 +24,13 @@ import { IoIosAdd } from "react-icons/io";
 import { GrLocationPin } from "react-icons/gr";
 import { BiTimeFive } from "react-icons/bi";
 import { TbListDetails } from "react-icons/tb";
-import { Trans } from 'react-i18next';
+import { Trans } from "react-i18next";
 
 import moment from "moment";
 
 // Properties
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface EventListProps { }
+export interface EventListProps {}
 
 // State
 export interface EventListState {
@@ -43,6 +43,8 @@ export interface EventListState {
   showAlert: boolean;
   alertText: string;
   clickView: boolean;
+  showDeleteModal: boolean;
+  toDeleteEventId: string;
   //TODO: Not sure it belongs here
   sharedEmails: string[];
 }
@@ -75,11 +77,14 @@ export class EventList extends React.Component<EventListProps, EventListState> {
       clickView: false,
       sharedEmails: [],
       currentSelectedSummary: {} as Event,
+      showDeleteModal: false,
+      toDeleteEventId: "",
     };
     // https://stackoverflow.com/questions/59490111/react-typeerror-undefined-onsubmit
     this.eventDetailsComponent = React.createRef();
     this.handleModalClose = this.handleModalClose.bind(this);
     this.handleShareClose = this.handleShareClose.bind(this);
+    this.handleDeleteClose = this.handleDeleteClose.bind(this);
     this.handleAlertClose = this.handleAlertClose.bind(this);
     this.onEmailsShared = this.onEmailsShared.bind(this);
   }
@@ -170,6 +175,10 @@ export class EventList extends React.Component<EventListProps, EventListState> {
       .delete(eventId)
       .then(() => {
         this.refreshList();
+        this.setState({
+          showDeleteModal: false,
+          toDeleteEventId: "",
+        });
       })
       .catch(error => {
         this.setState({
@@ -179,20 +188,25 @@ export class EventList extends React.Component<EventListProps, EventListState> {
       });
   }
 
-
   updateSharedEvent() {
     if (this.state.sharedEmails.length == 0) {
       return;
     }
-    if (this.state.currentSelectedSummary.id == undefined || this.state.currentSelectedSummary.id == "") {
+    if (
+      this.state.currentSelectedSummary.id == undefined ||
+      this.state.currentSelectedSummary.id == ""
+    ) {
       this.setState({
         showAlert: true,
         alertText: "Error the current selected event context is empty",
       });
     }
     const sharedEmails: EventSharedEmails = {
-      eventId: this.state.currentSelectedSummary.id != undefined ? this.state.currentSelectedSummary.id : "",
-      sharedEmails: this.state.sharedEmails
+      eventId:
+        this.state.currentSelectedSummary.id != undefined
+          ? this.state.currentSelectedSummary.id
+          : "",
+      sharedEmails: this.state.sharedEmails,
     };
     // Then save
     this.repository
@@ -200,7 +214,7 @@ export class EventList extends React.Component<EventListProps, EventListState> {
       .then(() => {
         this.setState({
           showShareModal: false,
-          sharedEmails: []
+          sharedEmails: [],
         });
       })
       .catch(error => {
@@ -210,18 +224,17 @@ export class EventList extends React.Component<EventListProps, EventListState> {
           alertText: this.handleErrorFromServer(error),
         });
       });
-
   }
 
   handleShareOpen(event: EventSummary) {
     this.repository
       .listSharedEmails(event.id)
-      .then((response) => {
+      .then(response => {
         this.setState({
           sharedEmails: response.sharedEmails,
           currentSelectedSummary: event,
-          showShareModal: true
-        })
+          showShareModal: true,
+        });
       })
       .catch(error => {
         this.setState({
@@ -248,11 +261,10 @@ export class EventList extends React.Component<EventListProps, EventListState> {
     }
     this.setState({
       showModal: false,
-      current: {} as Event
+      current: {} as Event,
     });
     event.preventDefault();
   };
-
 
   getFromForm(elements: any, mainEventDay: Date) {
     const name = elements[0].value;
@@ -260,7 +272,10 @@ export class EventList extends React.Component<EventListProps, EventListState> {
     const date = mainEventDay.toISOString();
     const description = elements[3].value;
     const event: Event = {
-      id: this.state.current.id != undefined && this.state.current.id != "" ? this.state.current.id : "",
+      id:
+        this.state.current.id != undefined && this.state.current.id != ""
+          ? this.state.current.id
+          : "",
       name: name,
       mainLocation: mainLocation,
       eventDay: date,
@@ -269,15 +284,13 @@ export class EventList extends React.Component<EventListProps, EventListState> {
     return event;
   }
 
-
   onEmailsShared(value: string[]) {
-
     if (value == null || value == undefined) {
       return;
     }
     this.setState({
-      sharedEmails: value
-    })
+      sharedEmails: value,
+    });
   }
 
   handleAlertClose() {
@@ -296,6 +309,12 @@ export class EventList extends React.Component<EventListProps, EventListState> {
   handleShareClose() {
     this.setState({
       showShareModal: false,
+    });
+  }
+
+  handleDeleteClose() {
+    this.setState({
+      showDeleteModal: false,
     });
   }
 
@@ -321,8 +340,12 @@ export class EventList extends React.Component<EventListProps, EventListState> {
           <Table striped responsive hover>
             <thead>
               <tr>
-                <th><Trans>Actions</Trans></th>
-                <th><Trans>Name</Trans></th>
+                <th>
+                  <Trans>Actions</Trans>
+                </th>
+                <th>
+                  <Trans>Name</Trans>
+                </th>
                 <th>
                   <GrLocationPin />
                   <Trans>Location</Trans>
@@ -344,7 +367,10 @@ export class EventList extends React.Component<EventListProps, EventListState> {
                           key={"vb-" + event.id}
                           variant="outline-success"
                           onClick={() =>
-                            this.setState({ currentSelectedSummary: event, clickView: true })
+                            this.setState({
+                              currentSelectedSummary: event,
+                              clickView: true,
+                            })
                           }
                         >
                           <TbListDetails />
@@ -358,27 +384,31 @@ export class EventList extends React.Component<EventListProps, EventListState> {
                         >
                           <FiEdit />
                         </Button>
-                        <Button key={"sb-" + event.id}
+                        <Button
+                          key={"sb-" + event.id}
                           variant="outline-success"
-                          onClick={() => this.handleShareOpen(event)}>
+                          onClick={() => this.handleShareOpen(event)}
+                        >
                           <MdIosShare />
                         </Button>
                       </ButtonGroup>
                     </td>
                     <td>{event.name}</td>
                     <td>{event.mainLocation}</td>
-                    <td>
-                      {moment(event.eventDay).format(
-                        DateFormat
-                      )}
-                    </td>
+                    <td>{moment(event.eventDay).format(DateFormat)}</td>
                     <td>
                       <ButtonGroup>
                         <Button
                           key={"db-" + event.id}
                           variant="outline-danger"
-                          onClick={() => this.deleteEvent(event.id)}
-                          disabled>
+                          onClick={() => {
+                            this.setState({
+                              showDeleteModal: true,
+                              currentSelectedSummary: event,
+                              toDeleteEventId: "",
+                            });
+                          }}
+                        >
                           <MdDelete />
                         </Button>
                       </ButtonGroup>
@@ -423,7 +453,9 @@ export class EventList extends React.Component<EventListProps, EventListState> {
           size="lg"
         >
           <Modal.Header closeButton>
-            <Modal.Title><Trans>{this.state.typeOfOperation} event</Trans></Modal.Title>
+            <Modal.Title>
+              <Trans>{this.state.typeOfOperation} event</Trans>
+            </Modal.Title>
           </Modal.Header>
           <Modal.Body>
             <EventDetails
@@ -433,33 +465,82 @@ export class EventList extends React.Component<EventListProps, EventListState> {
             />
           </Modal.Body>
         </Modal>
-        <Modal
-          show={this.state.showShareModal}
-          onHide={this.handleShareClose}
-        >
+        <Modal show={this.state.showShareModal} onHide={this.handleShareClose}>
           <Modal.Header closeButton>
-            <Modal.Title><Trans>Share event</Trans></Modal.Title>
+            <Modal.Title>
+              <Trans>Share event</Trans>
+            </Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            <p>You can share your event with others! Add an email below and <b style={{ color: "blue" }}>hit enter</b> , when you are ready click save!</p>
-            <InputGroup >
+            <p>
+              You can share your event with others! Add an email below and{" "}
+              <b style={{ color: "blue" }}>hit enter</b> , when you are ready
+              click save!
+            </p>
+            <InputGroup>
               <TagsInput
                 name="emails"
                 placeHolder="Enter emails ..."
                 beforeAddValidate={validateEmail}
                 value={this.state.sharedEmails}
-                onExisting={(value) => alert('Already added ' + value)}
-                onChange={this.onEmailsShared} />
+                onExisting={value => alert("Already added " + value)}
+                onChange={this.onEmailsShared}
+              />
             </InputGroup>
             <i>NOTE: Remove emails is not supported on save </i>
           </Modal.Body>
           <Modal.Footer>
-            <Button variant="primary" onClick={() => { this.updateSharedEvent(); }}><Trans>Save changes</Trans></Button>
+            <Button
+              variant="primary"
+              onClick={() => {
+                this.updateSharedEvent();
+              }}
+            >
+              <Trans>Save changes</Trans>
+            </Button>
+          </Modal.Footer>
+        </Modal>
+        <Modal
+          show={this.state.showDeleteModal}
+          onHide={this.handleDeleteClose}
+          size="lg"
+        >
+          <Modal.Header closeButton>
+            <Modal.Title>
+              <Trans>Delete event</Trans>
+            </Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <p>
+              Please input the id of the event{" "}
+              <b>{this.state.currentSelectedSummary.id}</b> to delete it.
+            </p>
+            <Form.Control
+              type="text"
+              placeholder={this.state.currentSelectedSummary.id}
+              onChange={(eventChange: any) => {
+                this.setState({
+                  toDeleteEventId: eventChange.target.value,
+                });
+              }}
+            />
+          </Modal.Body>
+          <Modal.Footer>
+            <Button
+              variant="danger"
+              onClick={() => {
+                this.deleteEvent(this.state.toDeleteEventId);
+              }}
+              disabled={
+                this.state.toDeleteEventId !=
+                this.state.currentSelectedSummary.id
+              }
+            >
+              <Trans>Delete event</Trans>
+            </Button>
           </Modal.Footer>
         </Modal>
       </div>
     );
   }
-
-
 }

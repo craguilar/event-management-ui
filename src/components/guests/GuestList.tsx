@@ -37,7 +37,7 @@ export class GuestList extends React.Component<GuestListProps, GuestListState> {
     {
       cell: (row: Guest) => this.rowEditButton(row),
       button: true,
-      width: '50px'
+      width: "50px",
     },
     {
       name: "First Name",
@@ -255,20 +255,22 @@ export class GuestList extends React.Component<GuestListProps, GuestListState> {
   };
 
   rowEditButton(event: Guest) {
-    return (<ButtonGroup>
-      <Button
-        key={"eb-"}
-        variant="outline-warning"
-        onClick={() => {
-          this.setState({
-            currentGuest: event,
-            showModal: true,
-          })
-        }}
-      >
-        <FiEdit />
-      </Button>
-    </ButtonGroup>)
+    return (
+      <ButtonGroup>
+        <Button
+          key={"eb-"}
+          variant="outline-warning"
+          onClick={() => {
+            this.setState({
+              currentGuest: event,
+              showModal: true,
+            });
+          }}
+        >
+          <FiEdit />
+        </Button>
+      </ButtonGroup>
+    );
   }
 
   gridActions = () => {
@@ -310,7 +312,10 @@ export class GuestList extends React.Component<GuestListProps, GuestListState> {
         >
           {this.state.alertText}
         </Alert>
-        <p><b>Summary Total guests: </b>{this.state.totalGuests}</p>
+        <p>
+          <b>Summary Total guests: </b>
+          {this.state.totalGuests}
+        </p>
         <DataTable
           columns={this.columns}
           data={this.state.guests}

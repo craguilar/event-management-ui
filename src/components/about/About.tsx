@@ -20,13 +20,16 @@ export class About extends React.Component {
         </p>
         <ul>
           <li>
-            <FaUserAlt /> <b style={{ color: "darkcyan" }}>Guests</b>. Allows you to Add/Update/Delete and Export your guests.
+            <FaUserAlt /> <b style={{ color: "darkcyan" }}>Guests</b>. Allows
+            you to Add/Update/Delete and Export your guests.
           </li>
           <li>
-            <TbReportMoney /> <b style={{ color: "darkcyan" }}>Expenses</b>.&nbsp;Allows you to Add/Update/Delete expenses.
+            <TbReportMoney /> <b style={{ color: "darkcyan" }}>Expenses</b>
+            .&nbsp;Allows you to Add/Update/Delete expenses.
           </li>
           <li>
-            <FcTodoList /> <b style={{ color: "darkcyan" }}>ToDo's</b>. Add ToDo's and mark them as Done.
+            <FcTodoList /> <b style={{ color: "darkcyan" }}>ToDo's</b>. Add
+            ToDo's and mark them as Done.
           </li>
         </ul>
         <p>

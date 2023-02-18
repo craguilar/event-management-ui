@@ -162,7 +162,7 @@ function ToDo(props: ToDoProps) {
             <ListGroup>
               {pendingTasks.map(todo => {
                 return (
-                  <ListGroup.Item  key={"ig-todo" + todo.id}>
+                  <ListGroup.Item key={"ig-todo" + todo.id}>
                     <input
                       key={"input-todo" + todo.id}
                       type="checkbox"
@@ -196,7 +196,11 @@ function ToDo(props: ToDoProps) {
                       }}
                     />
                     <s>{" " + todo.name}</s>
-                    <Badge key={"badge" + todo.id} bg="success" className="float-end">
+                    <Badge
+                      key={"badge" + todo.id}
+                      bg="success"
+                      className="float-end"
+                    >
                       {todo.status}
                     </Badge>
                   </ListGroup.Item>

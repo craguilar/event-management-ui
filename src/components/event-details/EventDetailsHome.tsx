@@ -16,7 +16,6 @@ import { FcTodoList } from "react-icons/fc";
 
 import moment from "moment";
 
-
 function EventDetailsHome() {
   const { state } = useLocation();
   const currentEvent: EventSummary = state;
@@ -32,14 +31,11 @@ function EventDetailsHome() {
         <PageTitle title={"Event : " + currentEvent.name} />
         <i>
           {currentEvent.mainLocation} on{" "}
-          {moment(currentEvent.eventDay).format(
-            DateFormat
-          )}
+          {moment(currentEvent.eventDay).format(DateFormat)}
         </i>
       </Container>
       <br />
       <Container>
-
         <Tabs
           defaultActiveKey="guest"
           id="uncontrolled-tab-example"

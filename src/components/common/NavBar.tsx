@@ -2,7 +2,7 @@ import * as React from "react";
 import Navbar from "react-bootstrap/Navbar";
 import Nav from "react-bootstrap/Nav";
 import NavDropdown from "react-bootstrap/NavDropdown";
-import { Trans } from 'react-i18next';
+import { Trans } from "react-i18next";
 
 // Properties
 export interface NavBarProps {
@@ -12,7 +12,7 @@ export interface NavBarProps {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface NavBarState { }
+export interface NavBarState {}
 
 export class NavBar extends React.Component<NavBarProps, NavBarState> {
   render() {
@@ -29,13 +29,22 @@ export class NavBar extends React.Component<NavBarProps, NavBarState> {
           Event Management
         </Navbar.Brand>
         <Nav className="me-auto">
-          <Nav.Link href="/"><Trans>Events</Trans></Nav.Link>
-          <Nav.Link href="/about"><Trans>About</Trans></Nav.Link>
+          <Nav.Link href="/">
+            <Trans>Events</Trans>
+          </Nav.Link>
+          <Nav.Link href="/about">
+            <Trans>About</Trans>
+          </Nav.Link>
           <Navbar.Toggle />
         </Nav>
         <Navbar.Collapse className="justify-content-end">
           <Nav>
-            <NavDropdown title={<Trans>Language</Trans>} menuVariant="dark" as={Navbar.Text} id="basic-nav-dropdown">
+            <NavDropdown
+              title={<Trans>Language</Trans>}
+              menuVariant="dark"
+              as={Navbar.Text}
+              id="basic-nav-dropdown"
+            >
               <NavDropdown.Item onClick={() => this.props.changeLanguage("en")}>
                 English
               </NavDropdown.Item>
@@ -58,7 +67,6 @@ export class NavBar extends React.Component<NavBarProps, NavBarState> {
               </NavDropdown.Item>
             </NavDropdown>
           </Nav>
-
         </Navbar.Collapse>
       </Navbar>
     );

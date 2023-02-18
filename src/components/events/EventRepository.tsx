@@ -142,17 +142,20 @@ export class EventRepository {
 
   async listSharedEmails(eventId: string): Promise<EventSharedEmails> {
     await this.waitUser();
-    return fetch(this.apiConfigurationParams.basePath + `/eventsShared/` + eventId, {
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-        Authorization:
-          "Bearer " +
-          (this.apiConfigurationParams.accessToken != undefined
-            ? this.apiConfigurationParams.accessToken
-            : "-"),
-      },
-    }).then(response => {
+    return fetch(
+      this.apiConfigurationParams.basePath + `/eventsShared/` + eventId,
+      {
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+          Authorization:
+            "Bearer " +
+            (this.apiConfigurationParams.accessToken != undefined
+              ? this.apiConfigurationParams.accessToken
+              : "-"),
+        },
+      }
+    ).then(response => {
       if (response.status >= 200 && response.status < 300) {
         return response.json();
       } else {
@@ -162,21 +165,26 @@ export class EventRepository {
   }
 
   // Share emails
-  async updateSharedEmails(sharedEmails: EventSharedEmails): Promise<EventSharedEmails> {
+  async updateSharedEmails(
+    sharedEmails: EventSharedEmails
+  ): Promise<EventSharedEmails> {
     await this.waitUser();
-    return fetch(this.apiConfigurationParams.basePath + `/events/actions/share`, {
-      method: "Put",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-        Authorization:
-          "Bearer " +
-          (this.apiConfigurationParams.accessToken != undefined
-            ? this.apiConfigurationParams.accessToken
-            : "-"),
-      },
-      body: JSON.stringify(sharedEmails),
-    }).then(response => {
+    return fetch(
+      this.apiConfigurationParams.basePath + `/events/actions/share`,
+      {
+        method: "Put",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+          Authorization:
+            "Bearer " +
+            (this.apiConfigurationParams.accessToken != undefined
+              ? this.apiConfigurationParams.accessToken
+              : "-"),
+        },
+        body: JSON.stringify(sharedEmails),
+      }
+    ).then(response => {
       if (response.status >= 200 && response.status < 300) {
         return response.json();
       } else {

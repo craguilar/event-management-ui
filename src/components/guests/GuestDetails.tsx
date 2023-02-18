@@ -11,8 +11,6 @@ export interface GuestDetailsProps {
 }
 
 export class GuestDetail extends React.Component<GuestDetailsProps> {
-
-
   render() {
     return (
       <div>

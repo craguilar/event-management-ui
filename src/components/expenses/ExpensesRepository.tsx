@@ -1,4 +1,4 @@
-import {ExpenseCategory} from "./model/ExpenseCategory";
+import { ExpenseCategory } from "./model/ExpenseCategory";
 import api_details from "../../api-exports";
 import { ConfigurationParameters } from "../api-configuration";
 import { Auth } from "aws-amplify";
@@ -6,7 +6,6 @@ import { CognitoUserSession } from "amazon-cognito-identity-js";
 
 // TODO: Thhis class requires refactor +1
 export class ExpensesRepository {
-
   private apiConfigurationParams: ConfigurationParameters = {};
 
   waitUser = () =>
@@ -105,7 +104,10 @@ export class ExpensesRepository {
     });
   }
 
-  async update(eventId: string, event: ExpenseCategory): Promise<ExpenseCategory> {
+  async update(
+    eventId: string,
+    event: ExpenseCategory
+  ): Promise<ExpenseCategory> {
     await this.waitUser();
     return fetch(
       this.apiConfigurationParams.basePath + `/expenses?eventId=` + eventId,

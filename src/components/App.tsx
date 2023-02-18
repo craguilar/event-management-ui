@@ -13,23 +13,31 @@ import {
 import "@aws-amplify/ui-react/styles.css";
 
 const App = ({ signOut, user }: WithAuthenticatorProps) => {
-  
   const { t, i18n } = useTranslation();
   const [initialized, setInitialized] = useState(false);
 
-  const userName = user == undefined || user.attributes == undefined ? "Anonymous" : user.attributes.email;
-  const changeLanguage = (language: string) => { i18n.changeLanguage(language)};
-  
+  const userName =
+    user == undefined || user.attributes == undefined
+      ? "Anonymous"
+      : user.attributes.email;
+  const changeLanguage = (language: string) => {
+    i18n.changeLanguage(language);
+  };
+
   useEffect(() => {
     if (!initialized) {
       changeLanguage(localStorage.getItem("language") || "en");
-      setInitialized(true);     
+      setInitialized(true);
     }
   });
-  
+
   return (
     <div className="App">
-      <NavBar signOut={signOut} userName={userName} changeLanguage={changeLanguage} />
+      <NavBar
+        signOut={signOut}
+        userName={userName}
+        changeLanguage={changeLanguage}
+      />
       <Router>
         <Routes>
           <Route path="/" element={<EventList />} />

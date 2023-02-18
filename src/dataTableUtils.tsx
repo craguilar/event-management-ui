@@ -1,4 +1,3 @@
-
 // TODO : Move to utility
 function downloadCSV(array: any[]) {
   const link = document.createElement("a");
@@ -42,6 +41,4 @@ function convertArrayOfObjectsToCSV(array: any[]) {
   return result;
 }
 
-export  {
-  downloadCSV
-};
+export { downloadCSV };

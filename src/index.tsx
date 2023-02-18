@@ -7,7 +7,7 @@ import reportWebVitals from "./reportWebVitals";
 import { Amplify } from "aws-amplify";
 import awsExports from "./aws-exports";
 import AppUtils from "./appUtils";
-import './i18n';
+import "./i18n";
 // Configure redirectSignIn and redirectSignOut
 
 const [localRedirectSignIn, productionRedirectSignIn] =
