@@ -99,7 +99,6 @@ To learn React, check out the [React documentation](https://reactjs.org/).
 
 ## ToDo
 
-1. Implement Edit guests.
 1. Implement Edit ToDos.
 1. Implement Remove Shared.
 1. Identify links and add a href .

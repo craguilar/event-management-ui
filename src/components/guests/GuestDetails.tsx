@@ -6,11 +6,12 @@ import Col from "react-bootstrap/Col";
 import Button from "react-bootstrap/Button";
 
 export interface GuestDetailsProps {
+  current: Guest;
   onSubmit: (event: any) => void;
 }
 
 export class GuestDetail extends React.Component<GuestDetailsProps> {
-  current = {} as Guest;
+
 
   render() {
     return (
@@ -23,7 +24,7 @@ export class GuestDetail extends React.Component<GuestDetailsProps> {
                 <Form.Control
                   type="text"
                   placeholder="John"
-                  value={this.current.firstName}
+                  defaultValue={this.props.current.firstName}
                   required
                 />
               </Col>
@@ -34,7 +35,7 @@ export class GuestDetail extends React.Component<GuestDetailsProps> {
                 <Form.Control
                   type="text"
                   placeholder="Doe"
-                  defaultValue={this.current.lastName}
+                  defaultValue={this.props.current.lastName}
                   required
                 />
               </Col>
@@ -47,7 +48,7 @@ export class GuestDetail extends React.Component<GuestDetailsProps> {
                 <Form.Control
                   type="email"
                   placeholder="john.doe@my.com"
-                  defaultValue={this.current.email}
+                  defaultValue={this.props.current.email}
                 />
               </Col>
             </Form.Group>
@@ -57,7 +58,7 @@ export class GuestDetail extends React.Component<GuestDetailsProps> {
                 <Form.Control
                   type="text"
                   placeholder="..."
-                  defaultValue={this.current.phone}
+                  defaultValue={this.props.current.phone}
                 />
               </Col>
             </Form.Group>
@@ -67,7 +68,7 @@ export class GuestDetail extends React.Component<GuestDetailsProps> {
                 <Form.Control
                   type="number"
                   placeholder="1"
-                  defaultValue={this.current.numberOfSeats}
+                  defaultValue={this.props.current.numberOfSeats}
                   required
                 />
               </Col>
@@ -79,7 +80,7 @@ export class GuestDetail extends React.Component<GuestDetailsProps> {
               <Form.Control
                 type="text"
                 placeholder="Mexico"
-                defaultValue={this.current.country}
+                defaultValue={this.props.current.country}
                 required
               />
               <Form.Control.Feedback type="invalid">
@@ -91,7 +92,7 @@ export class GuestDetail extends React.Component<GuestDetailsProps> {
               <Form.Control
                 type="text"
                 placeholder="State"
-                defaultValue={this.current.state}
+                defaultValue={this.props.current.state}
               />
               <Form.Control.Feedback type="invalid">
                 Please provide a valid state.
@@ -102,7 +103,7 @@ export class GuestDetail extends React.Component<GuestDetailsProps> {
               <Form.Control
                 type="text"
                 placeholder="Event owner"
-                defaultValue={this.current.guestOf}
+                defaultValue={this.props.current.guestOf}
               />
               <Form.Control.Feedback type="invalid">
                 Who is this guest of?
@@ -115,14 +116,14 @@ export class GuestDetail extends React.Component<GuestDetailsProps> {
               <Form.Check
                 type="switch"
                 label="Is tentative guest"
-                checked={this.current.isTentative}
+                checked={this.props.current.isTentative}
               />
             </Form.Group>
           </Row>
           <br />
           <Form.Group as={Col}>
             <Button variant="primary" type="submit">
-              Submit
+              Save changes
             </Button>
           </Form.Group>
         </Form>

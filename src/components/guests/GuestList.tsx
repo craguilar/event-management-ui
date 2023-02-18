@@ -10,6 +10,7 @@ import Modal from "react-bootstrap/Modal";
 import { IoIosAdd } from "react-icons/io";
 import { CgExport } from "react-icons/cg";
 import { MdDelete } from "react-icons/md";
+import { FiEdit } from "react-icons/fi";
 import Alert from "react-bootstrap/Alert";
 
 // Properties
@@ -19,8 +20,9 @@ export interface GuestListProps {
 
 export interface GuestListState {
   guests: Guest[];
-  totalGuests: number;
   selected: Guest[];
+  currentGuest: Guest;
+  totalGuests: number;
   showModal: boolean;
   showAlert: boolean;
   alertText: string;
@@ -32,6 +34,11 @@ export class GuestList extends React.Component<GuestListProps, GuestListState> {
   private detailsComponent: React.RefObject<GuestDetail>;
 
   private columns = [
+    {
+      cell: (row: Guest) => this.rowEditButton(row),
+      button: true,
+      width: '50px'
+    },
     {
       name: "First Name",
       selector: (row: Guest) => row.firstName,
@@ -78,6 +85,7 @@ export class GuestList extends React.Component<GuestListProps, GuestListState> {
     this.state = {
       guests: [],
       showAlert: false,
+      currentGuest: {} as Guest,
       alertText: "",
       showModal: false,
       selected: [],
@@ -149,6 +157,7 @@ export class GuestList extends React.Component<GuestListProps, GuestListState> {
   // UI handlers and Components
   onAddButtonClick() {
     this.setState({
+      currentGuest: {} as Guest,
       showModal: true,
     });
   }
@@ -188,6 +197,7 @@ export class GuestList extends React.Component<GuestListProps, GuestListState> {
 
   handleModalClose() {
     this.setState({
+      currentGuest: {} as Guest,
       showModal: false,
     });
   }
@@ -198,6 +208,7 @@ export class GuestList extends React.Component<GuestListProps, GuestListState> {
       this.addModel(this.getFromForm(elements));
     }
     this.setState({
+      currentGuest: {} as Guest,
       showModal: false,
     });
     event.preventDefault();
@@ -214,6 +225,7 @@ export class GuestList extends React.Component<GuestListProps, GuestListState> {
     const guestOf = elements[7].value;
     const isTentative = elements[8].checked;
     const guest: Guest = {
+      id: this.state.currentGuest.id != "" ? this.state.currentGuest.id : "",
       firstName: firstName,
       lastName: lastName,
       email: email,
@@ -241,6 +253,23 @@ export class GuestList extends React.Component<GuestListProps, GuestListState> {
       </Button>
     );
   };
+
+  rowEditButton(event: Guest) {
+    return (<ButtonGroup>
+      <Button
+        key={"eb-"}
+        variant="outline-warning"
+        onClick={() => {
+          this.setState({
+            currentGuest: event,
+            showModal: true,
+          })
+        }}
+      >
+        <FiEdit />
+      </Button>
+    </ButtonGroup>)
+  }
 
   gridActions = () => {
     return (
@@ -305,6 +334,7 @@ export class GuestList extends React.Component<GuestListProps, GuestListState> {
             <GuestDetail
               ref={this.detailsComponent}
               onSubmit={this.onSubmitClick}
+              current={this.state.currentGuest}
             />
           </Modal.Body>
         </Modal>
