@@ -6,6 +6,9 @@ import { EventDetails } from "./EventDetails";
 import { EventRepository } from "./EventRepository";
 import { validateEmail, DateFormat } from "../../dataUtils";
 import { Navigate } from "react-router-dom";
+import Form from 'react-bootstrap/Form';
+import Row from "react-bootstrap/Row";
+import Col from "react-bootstrap/Col";
 import Table from "react-bootstrap/Table";
 import ButtonGroup from "react-bootstrap/ButtonGroup";
 import Button from "react-bootstrap/Button";
@@ -298,22 +301,23 @@ export class EventList extends React.Component<EventListProps, EventListState> {
 
   displayTable() {
     return (
-      <div>
-        <div style={{ textAlign: "right" }}>
-          <ButtonGroup aria-label="Tool bar">
-            <Button
-              variant="success"
-              onClick={() => {
-                this.onAddButtonClick();
-              }}
-            >
-              <IoIosAdd />
-              <Trans>Add event</Trans>
-            </Button>
-          </ButtonGroup>
-        </div>
-        <br />
-        <div>
+      <Container>
+        <Row>
+          <Form.Group as={Col}>
+            <ButtonGroup aria-label="Tool bar" className="float-end">
+              <Button
+                variant="success"
+                onClick={() => {
+                  this.onAddButtonClick();
+                }}
+              >
+                <IoIosAdd />
+                <Trans>Add event</Trans>
+              </Button>
+            </ButtonGroup>
+          </Form.Group>
+        </Row>
+        <Row>
           <Table striped responsive hover>
             <thead>
               <tr>
@@ -391,8 +395,8 @@ export class EventList extends React.Component<EventListProps, EventListState> {
               />
             )}
           </Table>
-        </div>
-      </div>
+        </Row>
+      </Container>
     );
   }
 
