@@ -571,7 +571,7 @@ export class ExpensesList extends React.Component<
                 <Row>
                   <Col>
                     <b style={{ color: "darkcyan" }}>{" " + expense.whoPaid}</b>{" "}
-                    paid ${CURRENCY_FORMATTER.format(expense.amountPaid)} on{" "}
+                    paid {CURRENCY_FORMATTER.format(expense.amountPaid)} on{" "}
                     {moment(expense.timePaidOn).format(DateFormat)}
                   </Col>
                   <Col>
@@ -617,7 +617,7 @@ export class ExpensesList extends React.Component<
             {CURRENCY_FORMATTER.format(this.state.summary.projectedTotal)} ,{" "}
             <b>Paid total </b>{" "}
             {CURRENCY_FORMATTER.format(this.state.summary.paidTotal)} and{" "}
-            <b>Actual total $ </b>{" "}
+            <b>Actual total </b>{" "}
             {CURRENCY_FORMATTER.format(this.state.summary.actualTotal)}{" "}
           </p>
           <DataTable

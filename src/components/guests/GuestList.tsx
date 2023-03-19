@@ -12,6 +12,7 @@ import { CgExport } from "react-icons/cg";
 import { MdDelete } from "react-icons/md";
 import { FiEdit } from "react-icons/fi";
 import Alert from "react-bootstrap/Alert";
+import styled from 'styled-components';
 
 // Properties
 export interface GuestListProps {
@@ -20,14 +21,45 @@ export interface GuestListProps {
 
 export interface GuestListState {
   guests: Guest[];
+  filteredGuests: Guest[];
   selected: Guest[];
   currentGuest: Guest;
   totalGuests: number;
+  filterText: string;
   showModal: boolean;
   showAlert: boolean;
   alertText: string;
   toggledClearRows: boolean;
 }
+
+const TextField = styled.input`
+	height: 32px;
+	width: 200px;
+	border-radius: 3px;
+	border-top-left-radius: 5px;
+	border-bottom-left-radius: 5px;
+	border-top-right-radius: 0;
+	border-bottom-right-radius: 0;
+	border: 1px solid #e5e5e5;
+	padding: 0 32px 0 16px;
+
+	&:hover {
+		cursor: pointer;
+	}
+`;
+
+const ClearButton = styled(Button)`
+	border-top-left-radius: 0;
+	border-bottom-left-radius: 0;
+	border-top-right-radius: 5px;
+	border-bottom-right-radius: 5px;
+	height: 34px;
+	width: 32px;
+	text-align: center;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+`;
 
 export class GuestList extends React.Component<GuestListProps, GuestListState> {
   private repository = new GuestRepository();
@@ -52,6 +84,7 @@ export class GuestList extends React.Component<GuestListProps, GuestListState> {
     {
       name: "Guest of",
       selector: (row: any) => row.guestOf,
+      sortable: true,
     },
     {
       name: "Email",
@@ -60,10 +93,12 @@ export class GuestList extends React.Component<GuestListProps, GuestListState> {
     {
       name: "Phone",
       selector: (row: any) => row.phone,
+      sortable: true,
     },
     {
       name: "Tentative",
       selector: (row: any) => (row.isTentative ? "Yes" : "No"),
+      sortable: true,
     },
     {
       name: "Country",
@@ -84,6 +119,8 @@ export class GuestList extends React.Component<GuestListProps, GuestListState> {
     super(props);
     this.state = {
       guests: [],
+      filteredGuests: [],
+      filterText: "",
       showAlert: false,
       currentGuest: {} as Guest,
       alertText: "",
@@ -97,6 +134,8 @@ export class GuestList extends React.Component<GuestListProps, GuestListState> {
     this.handleAlertClose = this.handleAlertClose.bind(this);
     this.handleModalClose = this.handleModalClose.bind(this);
     this.onSelectedRows = this.onSelectedRows.bind(this);
+    this.onFilterClear = this.onFilterClear.bind(this);
+    this.onFilterChange = this.onFilterChange.bind(this);
   }
 
   // TODO check wht it's called twice
@@ -114,8 +153,10 @@ export class GuestList extends React.Component<GuestListProps, GuestListState> {
         for (const row of results) {
           numberOfSeats += row.numberOfSeats;
         }
+        // Apply filtering
         this.setState({
           guests: results,
+          filteredGuests: this.filterGuests(results,this.state.alertText),
           totalGuests: numberOfSeats,
         });
       })
@@ -125,6 +166,17 @@ export class GuestList extends React.Component<GuestListProps, GuestListState> {
           alertText: this.handleErrorFromServer(error),
         });
       });
+  }
+
+  // We could move this to a utility
+  filterGuests(data: Guest[], filterText: string): Guest[] {
+    // Go for a simple 
+    if (filterText) {
+      return data.filter(
+        item => item.firstName.toLowerCase().includes(filterText.toLowerCase()),
+      );
+    }
+    return data;
   }
 
   addModel(value: Guest) {
@@ -299,6 +351,47 @@ export class GuestList extends React.Component<GuestListProps, GuestListState> {
     );
   };
 
+  onFilterChange(filter: string) {
+    this.setState({
+      filterText: filter
+    })
+    // Now do the filter 
+    const data = this.filterGuests(this.state.guests,filter)
+    this.setState({
+      filteredGuests: data
+    })
+  }
+
+  onFilterClear() {
+    if (this.state.filterText) {
+      this.setState({
+        filterText: '',
+        filteredGuests: this.state.guests
+      })
+    }
+  }
+
+  filterAction = () => {
+    return (
+      <>
+        <TextField
+          id="search"
+          type="text"
+          placeholder="Filter guests"
+          aria-label="Search Input"
+          value={this.state.filterText}
+          onChange={e => this.onFilterChange(e.target.value)}
+        />
+        <ClearButton type="button"
+          onClick={this.onFilterClear}
+        >
+          X
+        </ClearButton>
+      </>
+    );
+  }
+
+
   // TODO: this looks super ugly
   render() {
     return (
@@ -318,14 +411,17 @@ export class GuestList extends React.Component<GuestListProps, GuestListState> {
         </p>
         <DataTable
           columns={this.columns}
-          data={this.state.guests}
+          data={this.state.filteredGuests}
           actions={this.gridActions()}
           contextActions={this.deleteButton()}
           onSelectedRowsChange={this.onSelectedRows}
           clearSelectedRows={this.state.toggledClearRows}
+          subHeader
+          subHeaderComponent={this.filterAction()}
           selectableRows
           pagination
           highlightOnHover
+          persistTableHead
         />
         <Modal
           show={this.state.showModal}
