@@ -14,6 +14,7 @@ export default interface Guest {
   country?: string;
   state?: string;
   numberOfSeats: number;
+  requiresInvite?: boolean;
   timeCreatedOn?: string;
   timeUpdatedOn?: string;
 }

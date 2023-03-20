@@ -113,8 +113,13 @@ export class GuestDetail extends React.Component<GuestDetailsProps> {
             <Form.Group>
               <Form.Check
                 type="switch"
-                label="Is tentative guest"
-                checked={this.props.current.isTentative}
+                label="Is tentative guest?"
+                defaultChecked ={this.props.current.isTentative}
+              />
+              <Form.Check
+                type="switch"
+                label="Physical Invite?"
+                defaultChecked ={this.props.current.requiresInvite}
               />
             </Form.Group>
           </Row>

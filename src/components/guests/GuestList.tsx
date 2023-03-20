@@ -101,6 +101,11 @@ export class GuestList extends React.Component<GuestListProps, GuestListState> {
       sortable: true,
     },
     {
+      name: "Physical Invite?",
+      selector: (row: any) => (row.requiresInvite ? "Yes" : "No"),
+      sortable: true,
+    },
+    {
       name: "Country",
       selector: (row: any) => row.country,
       sortable: true,
@@ -156,7 +161,7 @@ export class GuestList extends React.Component<GuestListProps, GuestListState> {
         // Apply filtering
         this.setState({
           guests: results,
-          filteredGuests: this.filterGuests(results,this.state.alertText),
+          filteredGuests: this.filterGuests(results,this.state.filterText),
           totalGuests: numberOfSeats,
         });
       })
@@ -276,6 +281,7 @@ export class GuestList extends React.Component<GuestListProps, GuestListState> {
     const state = elements[6].value;
     const guestOf = elements[7].value;
     const isTentative = elements[8].checked;
+    const invite = elements[9].checked;
     const guest: Guest = {
       id: this.state.currentGuest.id != "" ? this.state.currentGuest.id : "",
       firstName: firstName,
@@ -287,6 +293,7 @@ export class GuestList extends React.Component<GuestListProps, GuestListState> {
       state: state,
       guestOf: guestOf,
       isTentative: isTentative,
+      requiresInvite: invite
     };
     return guest;
   }
