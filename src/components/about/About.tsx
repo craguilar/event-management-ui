@@ -11,9 +11,9 @@ export class About extends React.Component {
     return (
       <Container>
         <br />
-        <PageTitle title={"Event Service"} />
+        <PageTitle title={"App Event Service"} />
         <p>
-          This is project helps <b>YOU</b> to manage YOUR events!
+          App Event Service is a SIMPLE service that helps <b>YOU</b> to manage YOUR events!
         </p>
         <p>
           <span>The elements of your event that can be managed are:</span>
