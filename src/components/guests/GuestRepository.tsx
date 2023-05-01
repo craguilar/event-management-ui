@@ -3,6 +3,7 @@ import api_details from "../../api-exports";
 import { ConfigurationParameters } from "../api-configuration";
 import { Auth } from "aws-amplify";
 import { CognitoUserSession } from "amazon-cognito-identity-js";
+import CopyFromRequest from "./model/CopyFromRequest";
 
 // TODO: Thhis class requires refactor +1
 export class GuestRepository {
@@ -98,6 +99,32 @@ export class GuestRepository {
     ).then(response => {
       if (response.status >= 200 && response.status < 300) {
         return response.json();
+      } else {
+        throw response;
+      }
+    });
+  }
+
+  async copyFrom(eventId: string | undefined, request: CopyFromRequest): Promise<any> {
+    await this.waitUser();
+    return fetch(
+      this.apiConfigurationParams.basePath + `/guests/actions/copy?eventId=` + eventId,
+      {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+          Authorization:
+            "Bearer " +
+            (this.apiConfigurationParams.accessToken != undefined
+              ? this.apiConfigurationParams.accessToken
+              : "-"),
+        },
+        body: JSON.stringify(request),
+      }
+    ).then(response => {
+      if (response.status >= 200 && response.status < 300) {
+        return "";
       } else {
         throw response;
       }

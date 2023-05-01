@@ -2,6 +2,8 @@ import * as React from "react";
 import { GuestDetail } from "./GuestDetails";
 import Guest from "./model/Guest";
 import { GuestRepository } from "./GuestRepository";
+import CopyFrom from "../events/CopyFrom";
+import CopyFromRequest from "./model/CopyFromRequest";
 import { downloadCSV } from "../../dataTableUtils";
 import DataTable from "react-data-table-component";
 import ButtonGroup from "react-bootstrap/ButtonGroup";
@@ -10,9 +12,11 @@ import Modal from "react-bootstrap/Modal";
 import { IoIosAdd } from "react-icons/io";
 import { CgExport } from "react-icons/cg";
 import { MdDelete } from "react-icons/md";
+import { IoMdCopy } from "react-icons/io";
 import { FiEdit } from "react-icons/fi";
 import Alert from "react-bootstrap/Alert";
 import styled from 'styled-components';
+
 
 // Properties
 export interface GuestListProps {
@@ -27,6 +31,7 @@ export interface GuestListState {
   totalGuests: number;
   filterText: string;
   showModal: boolean;
+  showCopyFromModal: boolean;
   showAlert: boolean;
   alertText: string;
   toggledClearRows: boolean;
@@ -130,6 +135,7 @@ export class GuestList extends React.Component<GuestListProps, GuestListState> {
       currentGuest: {} as Guest,
       alertText: "",
       showModal: false,
+      showCopyFromModal: false,
       selected: [],
       toggledClearRows: false,
       totalGuests: 0,
@@ -138,6 +144,7 @@ export class GuestList extends React.Component<GuestListProps, GuestListState> {
     // TODO: Do I really need this?
     this.handleAlertClose = this.handleAlertClose.bind(this);
     this.handleModalClose = this.handleModalClose.bind(this);
+    this.handleModalCopyFromClose = this.handleModalCopyFromClose.bind(this);
     this.onSelectedRows = this.onSelectedRows.bind(this);
     this.onFilterClear = this.onFilterClear.bind(this);
     this.onFilterChange = this.onFilterChange.bind(this);
@@ -161,7 +168,7 @@ export class GuestList extends React.Component<GuestListProps, GuestListState> {
         // Apply filtering
         this.setState({
           guests: results,
-          filteredGuests: this.filterGuests(results,this.state.filterText),
+          filteredGuests: this.filterGuests(results, this.state.filterText),
           totalGuests: numberOfSeats,
         });
       })
@@ -198,6 +205,20 @@ export class GuestList extends React.Component<GuestListProps, GuestListState> {
       });
   }
 
+  copyFrom(value: CopyFromRequest) {
+    this.repository
+      .copyFrom(this.props.eventId, value)
+      .then(() => {
+        this.refreshList();
+      }) 
+      .catch(error => {
+        this.setState({
+          showAlert: true,
+          alertText: this.handleErrorFromServer(error),
+        });
+      });
+  }
+
   handleErrorFromServer(error: Response) {
     const message = "From server - error : ";
     if (error.status === 401) {
@@ -216,6 +237,12 @@ export class GuestList extends React.Component<GuestListProps, GuestListState> {
     this.setState({
       currentGuest: {} as Guest,
       showModal: true,
+    });
+  }
+
+  onCopyFromButtonClick() {
+    this.setState({
+      showCopyFromModal: true,
     });
   }
 
@@ -259,6 +286,12 @@ export class GuestList extends React.Component<GuestListProps, GuestListState> {
     });
   }
 
+  handleModalCopyFromClose() {
+    this.setState({
+      showCopyFromModal: false,
+    });
+  }
+
   onSubmitClick = (event: any) => {
     const elements = event.target.elements;
     if (elements.length > 0) {
@@ -267,6 +300,23 @@ export class GuestList extends React.Component<GuestListProps, GuestListState> {
     this.setState({
       currentGuest: {} as Guest,
       showModal: false,
+    });
+    event.preventDefault();
+  };
+
+  onSubmitCopyFromClick = (event: any) => {
+    const elements = event.target.elements;
+    for (const entry of elements) {
+      if (entry.checked) {
+        const request: CopyFromRequest = {
+          fromEvent: entry.id,
+        };
+        this.copyFrom(request);
+      }
+    }
+    // Do processing here
+    this.setState({
+      showCopyFromModal: false,
     });
     event.preventDefault();
   };
@@ -347,6 +397,16 @@ export class GuestList extends React.Component<GuestListProps, GuestListState> {
         </Button>
         <Button
           onClick={() => {
+            this.onCopyFromButtonClick();
+          }}
+          type="button"
+          variant="secondary"
+        >
+          <IoMdCopy />
+          Copy From
+        </Button>
+        <Button
+          onClick={() => {
             downloadCSV(this.state.guests);
           }}
           type="button"
@@ -363,7 +423,7 @@ export class GuestList extends React.Component<GuestListProps, GuestListState> {
       filterText: filter
     })
     // Now do the filter 
-    const data = this.filterGuests(this.state.guests,filter)
+    const data = this.filterGuests(this.state.guests, filter)
     this.setState({
       filteredGuests: data
     })
@@ -444,6 +504,18 @@ export class GuestList extends React.Component<GuestListProps, GuestListState> {
               onSubmit={this.onSubmitClick}
               current={this.state.currentGuest}
             />
+          </Modal.Body>
+        </Modal>
+        <Modal
+          show={this.state.showCopyFromModal}
+          onHide={this.handleModalCopyFromClose}
+          size="lg"
+        >
+          <Modal.Header closeButton>
+            <Modal.Title>Copy From Event</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <CopyFrom eventId={this.props.eventId} onSubmit={this.onSubmitCopyFromClick} />
           </Modal.Body>
         </Modal>
       </div>

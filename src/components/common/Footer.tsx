@@ -10,8 +10,7 @@ export class Footer extends React.Component {
       <div>
         <footer className="page-footer font-small blue">
           <div className="footer-copyright text-center py-3">
-            © {this.currentYear} Copyright: Carlos Ruiz - Version{" "}
-            <i>{this.gitInfo.commit.shortHash}</i>
+            <a href="https://app-events.cmymesh.com/privacy">Privacy</a> | © {this.currentYear} Copyright: Carlos Ruiz - Version{" "} <i>{this.gitInfo.commit.shortHash}</i>
           </div>
         </footer>
       </div>
