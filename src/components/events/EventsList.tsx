@@ -30,7 +30,7 @@ import moment from "moment";
 
 // Properties
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface EventListProps {}
+export interface EventListProps { }
 
 // State
 export interface EventListState {
@@ -58,10 +58,17 @@ export interface EventListState {
  */
 const NEW_TYPE_OF_OPERATION = "New";
 const UPDATE_TYPE_OF_OPERATION = "Update";
+const disabledStyle = {
+  color: "#bfbfbf",
+  backgroundColor: "#e6e6e6",
+  textDecoration: "line-through"
+};
+
 
 export class EventList extends React.Component<EventListProps, EventListState> {
   private repository = new EventRepository();
   private eventDetailsComponent: React.RefObject<EventDetails>;
+
 
   constructor(props: EventListProps) {
     super(props);
@@ -337,7 +344,7 @@ export class EventList extends React.Component<EventListProps, EventListState> {
           </Form.Group>
         </Row>
         <Row>
-          <Table striped responsive hover>
+          <Table responsive hover>
             <thead>
               <tr>
                 <th>
@@ -360,7 +367,7 @@ export class EventList extends React.Component<EventListProps, EventListState> {
             <tbody>
               {this.state.events.map(event => {
                 return (
-                  <tr key={"tr-" + event.id}>
+                  <tr key={"tr-" + event.id} style={new Date(event.eventDay) < new Date() ? disabledStyle : {}}>
                     <td>
                       <ButtonGroup>
                         <Button
@@ -396,7 +403,7 @@ export class EventList extends React.Component<EventListProps, EventListState> {
                     <td>{event.name}</td>
                     <td>{event.mainLocation}</td>
                     <td>{moment(event.eventDay).format(DateFormat)}</td>
-                    <td>
+                    <td >
                       <ButtonGroup>
                         <Button
                           key={"db-" + event.id}
@@ -426,7 +433,7 @@ export class EventList extends React.Component<EventListProps, EventListState> {
             )}
           </Table>
         </Row>
-      </Container>
+      </Container >
     );
   }
 
