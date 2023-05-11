@@ -106,8 +106,9 @@ export class EventList extends React.Component<EventListProps, EventListState> {
     this.repository
       .list()
       .then(results => {
+
         this.setState({
-          events: results,
+          events: results.sort((e1, e2) => Date.parse(e2.eventDay) - Date.parse(e1.eventDay)),
         });
       })
       .catch(error => {
