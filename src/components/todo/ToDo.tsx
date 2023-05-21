@@ -61,8 +61,8 @@ function ToDo(props: ToDoProps) {
           completed.push(e);
         }
       });
-      setPendingTasks(pending);
-      setCompletedTasks(completed);
+      setPendingTasks(pending.sort());
+      setCompletedTasks(completed.sort());
     }
     repository
       .list(props.eventId)
