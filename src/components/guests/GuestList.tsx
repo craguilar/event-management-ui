@@ -185,7 +185,8 @@ export class GuestList extends React.Component<GuestListProps, GuestListState> {
     // Go for a simple 
     if (filterText) {
       return data.filter(
-        item => item.firstName.toLowerCase().includes(filterText.toLowerCase()),
+        item => item.firstName.toLowerCase().includes(filterText.toLowerCase()) ||
+          item.phone?.includes(filterText),
       );
     }
     return data;
