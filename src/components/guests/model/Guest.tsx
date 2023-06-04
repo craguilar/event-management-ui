@@ -15,6 +15,7 @@ export default interface Guest {
   state?: string;
   numberOfSeats: number;
   requiresInvite?: boolean;
+  isNotAttending?: boolean;
   timeCreatedOn?: string;
   timeUpdatedOn?: string;
 }

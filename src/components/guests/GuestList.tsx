@@ -29,6 +29,7 @@ export interface GuestListState {
   selected: Guest[];
   currentGuest: Guest;
   totalGuests: number;
+  confirmedGuests: number;
   filterText: string;
   showModal: boolean;
   showCopyFromModal: boolean;
@@ -92,12 +93,13 @@ export class GuestList extends React.Component<GuestListProps, GuestListState> {
       sortable: true,
     },
     {
-      name: "Email",
-      selector: (row: any) => row.email,
-    },
-    {
       name: "Phone",
       selector: (row: any) => row.phone,
+      sortable: true,
+    },
+    {
+      name: "Not Attending?",
+      selector: (row: any) => (row.isNotAttending ? "Not going" : "-"),
       sortable: true,
     },
     {
@@ -139,6 +141,7 @@ export class GuestList extends React.Component<GuestListProps, GuestListState> {
       selected: [],
       toggledClearRows: false,
       totalGuests: 0,
+      confirmedGuests: 0,
     };
     this.detailsComponent = React.createRef();
     // TODO: Do I really need this?
@@ -162,14 +165,17 @@ export class GuestList extends React.Component<GuestListProps, GuestListState> {
       .list(this.props.eventId != undefined ? this.props.eventId : "-")
       .then(results => {
         let numberOfSeats = 0;
+        let confirmed = 0;
         for (const row of results) {
           numberOfSeats += row.numberOfSeats;
+          confirmed = !row.isNotAttending ? confirmed + row.numberOfSeats : confirmed;
         }
         // Apply filtering
         this.setState({
           guests: results,
           filteredGuests: this.filterGuests(results, this.state.filterText),
           totalGuests: numberOfSeats,
+          confirmedGuests : confirmed,
         });
       })
       .catch(error => {
@@ -211,7 +217,7 @@ export class GuestList extends React.Component<GuestListProps, GuestListState> {
       .copyFrom(this.props.eventId, value)
       .then(() => {
         this.refreshList();
-      }) 
+      })
       .catch(error => {
         this.setState({
           showAlert: true,
@@ -332,7 +338,8 @@ export class GuestList extends React.Component<GuestListProps, GuestListState> {
     const state = elements[6].value;
     const guestOf = elements[7].value;
     const isTentative = elements[8].checked;
-    const invite = elements[9].checked;
+    const isNotAttending = elements[9].checked;
+    const invite = elements[10].checked;
     const guest: Guest = {
       id: this.state.currentGuest.id != "" ? this.state.currentGuest.id : "",
       firstName: firstName,
@@ -344,6 +351,7 @@ export class GuestList extends React.Component<GuestListProps, GuestListState> {
       state: state,
       guestOf: guestOf,
       isTentative: isTentative,
+      isNotAttending: isNotAttending,
       requiresInvite: invite
     };
     return guest;
@@ -474,8 +482,11 @@ export class GuestList extends React.Component<GuestListProps, GuestListState> {
           {this.state.alertText}
         </Alert>
         <p>
-          <b>Summary Total guests: </b>
-          {this.state.totalGuests}
+          <b>Summary</b>
+          <ul>
+            <li><b>Total guests    : </b>{this.state.totalGuests}</li>
+            <li><b>Confirmed guests: </b>{this.state.confirmedGuests}</li>
+          </ul>
         </p>
         <DataTable
           columns={this.columns}

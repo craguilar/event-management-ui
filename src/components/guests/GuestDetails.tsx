@@ -118,6 +118,11 @@ export class GuestDetail extends React.Component<GuestDetailsProps> {
               />
               <Form.Check
                 type="switch"
+                label="Confirmed not Attending?"
+                defaultChecked ={this.props.current.isNotAttending}
+              />
+              <Form.Check
+                type="switch"
                 label="Physical Invite?"
                 defaultChecked ={this.props.current.requiresInvite}
               />
