@@ -508,7 +508,7 @@ export class GuestList extends React.Component<GuestListProps, GuestListState> {
           size="lg"
         >
           <Modal.Header closeButton>
-            <Modal.Title>Add guest</Modal.Title>
+            <Modal.Title>Add or Update guest</Modal.Title>
           </Modal.Header>
           <Modal.Body>
             <GuestDetail
