@@ -12,6 +12,7 @@ import DataTable from "react-data-table-component";
 import ButtonGroup from "react-bootstrap/ButtonGroup";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
+import Accordion from 'react-bootstrap/Accordion';
 import Form from "react-bootstrap/Form";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
@@ -36,6 +37,7 @@ export interface ExpensesListState {
   expenses: ExpenseCategory[];
   selected: ExpenseCategory[];
   summary: ExpensesSummary;
+  paymentSummary: Map<string, number>;
   showAlert: boolean;
   alertText: string;
   toggledClearRows: boolean;
@@ -101,6 +103,7 @@ export class ExpensesList extends React.Component<
       summary: {} as ExpensesSummary,
       showAlert: false,
       alertText: "",
+      paymentSummary: new Map<string, number>(),
       toggledClearRows: false,
       showCategoryModal: false,
       expenseCategoryValidated: false,
@@ -124,6 +127,7 @@ export class ExpensesList extends React.Component<
           paidTotal: 0,
           actualTotal: 0,
         };
+        const tmpPaymentDetails = new Map<string, number>();
         for (const row of results) {
           calculatedSummary.projectedTotal +=
             row.amountProjected != undefined ? row.amountProjected : 0.0;
@@ -131,10 +135,21 @@ export class ExpensesList extends React.Component<
             row.amountPaid != undefined ? row.amountPaid : 0;
           calculatedSummary.actualTotal +=
             row.amountTotal != undefined ? row.amountTotal : 0;
+          // TODO: I kind of hate this but dah
+          for (const expense of (row.expenses || [])) {
+            const paidBy = expense?.whoPaid || "anonymous";
+            const amountPaid = expense?.amountPaid || 0;
+            if (tmpPaymentDetails.get(paidBy) == undefined) {
+              tmpPaymentDetails.set(paidBy, amountPaid);
+            } else {
+              tmpPaymentDetails.set(paidBy, (tmpPaymentDetails.get(paidBy) || 0) + amountPaid);
+            }
+          }
         }
         this.setState({
           expenses: results,
           summary: calculatedSummary,
+          paymentSummary: tmpPaymentDetails
         });
       })
       .catch(error => {
@@ -620,6 +635,22 @@ export class ExpensesList extends React.Component<
             <b>Actual total </b>{" "}
             {CURRENCY_FORMATTER.format(this.state.summary.actualTotal)}{" "}
           </p>
+          <Accordion>
+            <Accordion.Item eventKey="0">
+              <Accordion.Header>Payment details</Accordion.Header>
+              <Accordion.Body>
+                <ul>
+                {
+                  Array.from(this.state.paymentSummary).map(element=> {
+                    return (
+                      <li><b style={{ color: "darkcyan" }}>{element[0]}</b> paid {CURRENCY_FORMATTER.format(element[1])}</li>
+                    );
+                  })
+                }
+                </ul>
+              </Accordion.Body>
+            </Accordion.Item>
+          </Accordion>
           <DataTable
             columns={this.columns}
             data={this.state.expenses}
