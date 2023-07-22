@@ -102,6 +102,9 @@ function ToDo(props: ToDoProps) {
   };
 
   const addTask = () => {
+    if (!input && input === "") {
+      return;
+    }
     const task: Task = {
       name: input,
       status: STATUS.PENDING,
