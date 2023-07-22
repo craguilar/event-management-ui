@@ -280,19 +280,14 @@ export class ExpensesList extends React.Component<
     if (form.checkValidity() === false) {
       event.stopPropagation();
     }
-    const expense: ExpenseCategory = {
-      id:
-        this.state.currentCategory.id != ""
-          ? this.state.currentCategory.id
-          : "",
+    const category: ExpenseCategory = {
+      id: this.state.currentCategory.id != "" ? this.state.currentCategory.id : "",
       category: event.target[0].value,
       amountProjected: parseFloat(event.target[1].value),
-      amountTotal:
-        event.target[2].value != ""
-          ? parseFloat(event.target[2].value)
-          : undefined,
+      amountTotal: event.target[2].value != "" ? parseFloat(event.target[2].value) : undefined,
+      expenses: this.state.currentCategory.expenses || []
     };
-    this.addModel(expense);
+    this.addModel(category);
     this.setState({
       currentCategory: {} as ExpenseCategory,
       expenseCategoryValidated: true,
@@ -569,6 +564,7 @@ export class ExpensesList extends React.Component<
 
   ExpenseDetailsComponent = (data: any) => this.expenseDetails(data);
 
+  // Components
   expenseDetails(row: any) {
     const category: ExpenseCategory =
       row.data != undefined ? row.data : ({} as ExpenseCategory);
@@ -640,13 +636,13 @@ export class ExpensesList extends React.Component<
               <Accordion.Header>Payment details</Accordion.Header>
               <Accordion.Body>
                 <ul>
-                {
-                  Array.from(this.state.paymentSummary).map(element=> {
-                    return (
-                      <li><b style={{ color: "darkcyan" }}>{element[0]}</b> paid {CURRENCY_FORMATTER.format(element[1])}</li>
-                    );
-                  })
-                }
+                  {
+                    Array.from(this.state.paymentSummary).map(element => {
+                      return (
+                        <li><b style={{ color: "darkcyan" }}>{element[0]}</b> paid {CURRENCY_FORMATTER.format(element[1])}</li>
+                      );
+                    })
+                  }
                 </ul>
               </Accordion.Body>
             </Accordion.Item>
