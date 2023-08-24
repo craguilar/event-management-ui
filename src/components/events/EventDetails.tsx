@@ -91,6 +91,15 @@ export class EventDetails extends React.Component<
                 />
               </Col>
             </Form.Group>
+            <Form.Group as={Col} controlId="isNotificationEnabled">
+              <Form.Label column>
+                <Trans>Notifications enabled?</Trans>
+              </Form.Label>
+              <Form.Check
+                type="switch"
+                defaultChecked={this.props.current.isNotificationEnabled}
+              />
+            </Form.Group>
           </Row>
           <br />
           <Form.Group as={Col} controlId="descriptionInput">

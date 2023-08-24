@@ -278,7 +278,8 @@ export class EventList extends React.Component<EventListProps, EventListState> {
     const name = elements[0].value;
     const mainLocation = elements[1].value;
     const date = mainEventDay.toISOString();
-    const description = elements[3].value;
+    const isNotificationEnabled = elements[3].checked;
+    const description = elements[4].value;
     const event: Event = {
       id:
         this.state.current.id != undefined && this.state.current.id != ""
@@ -288,6 +289,7 @@ export class EventList extends React.Component<EventListProps, EventListState> {
       mainLocation: mainLocation,
       eventDay: date,
       description: description,
+      isNotificationEnabled: isNotificationEnabled,
     };
     return event;
   }

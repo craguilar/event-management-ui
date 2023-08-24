@@ -11,4 +11,5 @@ export interface Event {
   description?: string;
   timeCreatedOn?: string;
   timeUpdatedOn?: string;
+  isNotificationEnabled?: boolean;
 }
