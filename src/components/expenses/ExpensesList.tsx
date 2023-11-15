@@ -93,6 +93,12 @@ export class ExpensesList extends React.Component<
       cell: (row: ExpenseCategory) => this.rowAddExpensetButton(row),
       button: true,
     },
+    {
+      cell: (row: ExpenseCategory) => this.rowPaidButton(row),
+      button: true,
+      width: "60px",
+      sortable: true,
+    },
   ];
 
   constructor(props: ExpensesListProps) {
@@ -375,6 +381,15 @@ export class ExpensesList extends React.Component<
         >
           <IoIosAdd />
         </Button>
+        
+      </ButtonGroup>
+    );
+  }
+
+  rowPaidButton(row: ExpenseCategory) {
+    return (
+      <ButtonGroup>
+        { row.amountPaid == row.amountTotal ? <Button variant="success">PAID</Button> : null }
       </ButtonGroup>
     );
   }
