@@ -391,7 +391,7 @@ export class ExpensesList extends React.Component<
   rowPaidButton(row: ExpenseCategory) {
     return (
       <ButtonGroup>
-        { row.amountPaid == row.amountTotal ? <Button variant="success"><MdPaid/></Button> : null }
+        { row.amountTotal && row.amountTotal >0 && row.amountPaid == row.amountTotal ? <Button variant="success"><MdPaid/></Button> : null }
       </ButtonGroup>
     );
   }
