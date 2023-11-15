@@ -640,13 +640,13 @@ export class ExpensesList extends React.Component<
           </Alert>
           <p>
             <b>
-              <Trans>Summary Projected total </Trans>
+              <Trans>Summary: Projected total </Trans>
             </b>
             {CURRENCY_FORMATTER.format(this.state.summary.projectedTotal)} ,{" "}
             <b>Paid total </b>{" "}
             {CURRENCY_FORMATTER.format(this.state.summary.paidTotal)} and{" "}
             <b>Actual total </b>{" "}
-            {CURRENCY_FORMATTER.format(this.state.summary.actualTotal)}{" "}
+            {CURRENCY_FORMATTER.format(this.state.summary.actualTotal)}
           </p>
           <Accordion>
             <Accordion.Item eventKey="0">
@@ -661,6 +661,7 @@ export class ExpensesList extends React.Component<
                     })
                   }
                 </ul>
+                <b>Pending to pay (from actual total) </b>{CURRENCY_FORMATTER.format(this.state.summary.actualTotal-this.state.summary.paidTotal)}{" "}
               </Accordion.Body>
             </Accordion.Item>
           </Accordion>
