@@ -22,6 +22,7 @@ import Container from "react-bootstrap/Container";
 import DatePicker from "react-datepicker";
 import { MdDelete } from "react-icons/md";
 import { IoIosAdd } from "react-icons/io";
+import { MdPaid  } from "react-icons/md"
 import { FiEdit } from "react-icons/fi";
 import { Trans } from "react-i18next";
 
@@ -94,6 +95,7 @@ export class ExpensesList extends React.Component<
       button: true,
     },
     {
+      name: <Trans>Paid?</Trans>,
       cell: (row: ExpenseCategory) => this.rowPaidButton(row),
       button: true,
       width: "60px",
@@ -389,7 +391,7 @@ export class ExpensesList extends React.Component<
   rowPaidButton(row: ExpenseCategory) {
     return (
       <ButtonGroup>
-        { row.amountPaid == row.amountTotal ? <Button variant="success">Paid</Button> : null }
+        { row.amountPaid == row.amountTotal ? <Button variant="success"><MdPaid/></Button> : null }
       </ButtonGroup>
     );
   }
